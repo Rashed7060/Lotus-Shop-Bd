@@ -1,0 +1,58 @@
+<svg viewBox="0 0 500 480" width="500" height="480" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lotusFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C" />
+      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#FBBF24" />
+    </linearGradient>
+    <linearGradient id="lotusWingGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#EA580C" />
+      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#FBBF24" />
+    </linearGradient>
+  </defs>
+
+  <!-- TOP CENTRAL LOTUS FLAME -->
+  <path d="M250 40 C230 100 200 160 250 230 C300 160 270 100 250 40 Z" fill="url(#lotusFlameGrad)" />
+  <path d="M250 100 C240 135 228 170 250 205 C272 170 260 135 250 100 Z" fill="#FFFFFF" />
+  <path d="M250 120 C244 142 236 165 250 188 C264 165 256 142 250 120 Z" fill="url(#lotusFlameGrad)" />
+
+  <!-- INNER LAYER BLACK PETALS -->
+  <path d="M235 230 C210 190 185 135 205 95 C208 130 215 175 235 230 Z" fill="#111111" />
+  <path d="M265 230 C290 190 315 135 295 95 C292 130 285 175 265 230 Z" fill="#111111" />
+
+  <!-- MID LAYER BLACK PETALS -->
+  <path d="M225 232 C165 200 115 120 170 90 C155 135 180 195 225 232 Z" fill="#111111" />
+  <path d="M275 232 C335 200 385 120 330 90 C345 135 320 195 275 232 Z" fill="#111111" />
+
+  <!-- OUTER ACCENT BLACK PETALS -->
+  <path d="M175 210 C110 190 90 130 140 135 C115 165 145 195 175 210 Z" fill="#111111" />
+  <path d="M325 210 C390 190 410 130 360 135 C385 165 355 195 325 210 Z" fill="#111111" />
+
+  <!-- BOTTOM BASE WING PETALS -->
+  <path d="M250 260 C180 260 110 200 115 250 C150 305 225 275 250 260 Z" fill="url(#lotusWingGrad)" />
+  <path d="M250 260 C320 260 390 200 385 250 C350 305 275 275 250 260 Z" fill="url(#lotusWingGrad)" />
+
+  <!-- WORDMARK: LOTUS -->
+  <g font-family="'Playfair Display', Georgia, serif" font-weight="900" font-size="78" fill="#111111" text-anchor="middle">
+    <text x="250" y="365" letter-spacing="12">LOTUS</text>
+  </g>
+
+  <!-- FLAME IN O -->
+  <ellipse cx="206" cy="336" rx="5" ry="12" fill="url(#lotusFlameGrad)" />
+
+  <!-- DIVIDER WITH DIAMOND -->
+  <line x1="120" y1="390" x2="235" y2="390" stroke="#EA580C" stroke-width="1.5" />
+  <polygon points="250,385 255,390 250,395 245,390" fill="#111111" />
+  <line x1="265" y1="390" x2="380" y2="390" stroke="#EA580C" stroke-width="1.5" />
+
+  <!-- CLOTHING BRAND -->
+  <text x="250" y="420" font-family="'Poppins', 'Montserrat', sans-serif" font-weight="800" font-size="20" fill="#EA580C" text-anchor="middle" letter-spacing="8">
+    CLOTHING BRAND
+  </text>
+
+  <!-- WE TRUST IN QUALITY -->
+  <text x="250" y="445" font-family="'Poppins', 'Montserrat', sans-serif" font-weight="700" font-size="14" fill="#222222" text-anchor="middle" letter-spacing="6">
+    WE TRUST IN QUALITY
+  </text>
+</svg>

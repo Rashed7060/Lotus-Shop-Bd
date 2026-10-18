@@ -1,0 +1,6 @@
+{
+  "name": "Lotus Shop BD - eCommerce Platform",
+  "description": "বাংলাদেশের জন্য পূর্ণাঙ্গ, আধুনিক ও প্রফেশনাল মাল্টি-প্রোডাক্ট ই-কমার্স প্ল্যাটফর্ম উইথ অ্যাডমিন কনসোল ও লোকাল পেমেন্ট ও কুরিয়ার ইন্টিগ্রেশন।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
