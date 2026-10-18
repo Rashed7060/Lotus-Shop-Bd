@@ -1,0 +1,170 @@
+<svg viewBox="0 0 600 560" width="600" height="560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flameGradInv" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="35%" stop-color="#F59E0B" />
+      <stop offset="70%" stop-color="#EA580C" />
+      <stop offset="100%" stop-color="#C2410C" />
+    </linearGradient>
+
+    <linearGradient id="wingGradInv" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#FBBF24" />
+    </linearGradient>
+    <linearGradient id="wingGradRightInv" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#EA580C" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#FBBF24" />
+    </linearGradient>
+  </defs>
+
+  <!-- ============================================================ -->
+  <!-- 1. TOP LOTUS EMBLEM (ALL PETALS TOGETHER - INVERTED)         -->
+  <!-- ============================================================ -->
+  <g id="lotus-flower-emblem">
+    <!-- CENTER FLAME: Outer Petal -->
+    <path
+      d="M300 15 C265 85 225 170 300 248 C375 170 335 85 300 15 Z"
+      fill="url(#flameGradInv)"
+    />
+
+    <!-- CENTER FLAME: White Teardrop Cutout -->
+    <path
+      d="M300 75 C282 120 262 165 300 215 C338 165 318 120 300 75 Z"
+      fill="#1A1A1A"
+    />
+
+    <!-- CENTER FLAME: Inner Flame Core -->
+    <path
+      d="M300 102 C290 135 278 165 300 195 C322 165 310 135 300 102 Z"
+      fill="url(#flameGradInv)"
+    />
+
+    <!-- INNER WHITE PETALS -->
+    <path
+      d="M282 248 C248 195 220 130 248 78 C252 120 260 178 282 248 Z"
+      fill="#FFFFFF"
+    />
+    <path
+      d="M318 248 C352 195 380 130 352 78 C348 120 340 178 318 248 Z"
+      fill="#FFFFFF"
+    />
+
+    <!-- MID TALL WHITE PETALS -->
+    <path
+      d="M272 254 C195 218 135 125 202 85 C185 142 220 212 272 254 Z"
+      fill="#FFFFFF"
+    />
+    <path
+      d="M328 254 C405 218 465 125 398 85 C415 142 380 212 328 254 Z"
+      fill="#FFFFFF"
+    />
+
+    <!-- OUTER WHITE PETALS -->
+    <path
+      d="M215 230 C132 208 102 142 165 148 C132 184 172 220 215 230 Z"
+      fill="#FFFFFF"
+    />
+    <path
+      d="M385 230 C468 208 498 142 435 148 C468 184 428 220 385 230 Z"
+      fill="#FFFFFF"
+    />
+
+    <!-- FAR ACCENT WHITE TIPS -->
+    <path
+      d="M178 222 C98 210 82 160 138 175 C102 206 142 226 178 222 Z"
+      fill="#FFFFFF"
+    />
+    <path
+      d="M422 222 C502 210 518 160 462 175 C498 206 458 226 422 222 Z"
+      fill="#FFFFFF"
+    />
+
+    <!-- BOTTOM ORANGE WING PETALS -->
+    <path
+      d="M300 282 C225 282 135 210 140 265 C185 325 272 296 300 282 Z"
+      fill="url(#wingGradInv)"
+    />
+    <path
+      d="M300 282 C375 282 465 210 460 265 C415 325 328 296 300 282 Z"
+      fill="url(#wingGradRightInv)"
+    />
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- 2. "LOTUS" WORDMARK (WHITE)                                  -->
+  <!-- ============================================================ -->
+  <g id="lotus-wordmark">
+    <text
+      x="300"
+      y="382"
+      text-anchor="middle"
+      font-family="'Playfair Display', 'Bodoni MT', 'Didot', 'Georgia', serif"
+      font-size="94"
+      font-weight="900"
+      letter-spacing="18"
+      fill="#FFFFFF"
+    >
+      LOTUS
+    </text>
+
+    <!-- Custom Orange Swoosh under 'L' -->
+    <path
+      d="M72 388 C 112 396 150 376 175 390 C 135 408 85 402 62 391 Z"
+      fill="url(#flameGradInv)"
+    />
+
+    <!-- Custom Orange Flame inside 'O' counter -->
+    <path
+      d="M232 334 C 223 350 221 364 232 374 C 243 364 241 350 232 334 Z"
+      fill="url(#flameGradInv)"
+    />
+
+    <!-- Custom Orange Leaf inside bottom curve of 'S' -->
+    <path
+      d="M482 365 C 496 360 512 376 488 391 C 504 380 492 366 482 365 Z"
+      fill="url(#flameGradInv)"
+    />
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- 3. DIVIDER WITH CENTER DIAMOND (INVERTED)                    -->
+  <!-- ============================================================ -->
+  <g id="lotus-divider">
+    <line x1="80" y1="418" x2="278" y2="418" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round" />
+    <polygon points="300,409 309,418 300,427 291,418" fill="#FBBF24" />
+    <line x1="322" y1="418" x2="520" y2="418" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round" />
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- 4. SUBTITLES (INVERTED)                                      -->
+  <!-- ============================================================ -->
+  <g id="lotus-subtitles">
+    <text
+      x="300"
+      y="456"
+      text-anchor="middle"
+      font-family="'Montserrat', 'Poppins', 'Inter', sans-serif"
+      font-size="24"
+      font-weight="800"
+      letter-spacing="11"
+      fill="#F59E0B"
+    >
+      CLOTHING BRAND
+    </text>
+
+    <text
+      x="300"
+      y="488"
+      text-anchor="middle"
+      font-family="'Montserrat', 'Poppins', 'Inter', sans-serif"
+      font-size="16"
+      font-weight="800"
+      letter-spacing="8"
+      fill="#E5E7EB"
+    >
+      WE TRUST IN QUALITY
+    </text>
+  </g>
+</svg>

@@ -198,7 +198,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // View States
   const [activeView, setActiveView] = useState<'home' | 'product' | 'checkout' | 'order_success' | 'account' | 'track_order' | 'admin'>('home');
-  const [language, setLanguage] = useState<'bn' | 'en'>('bn');
+  const [language, setLanguage] = useState<'bn' | 'en'>('en');
   const [activeProduct, setActiveProduct] = useState<Product | null>(INITIAL_PRODUCTS[0]);
   const [activeOrder, setActiveOrder] = useState<Order | null>(INITIAL_ORDERS[0]);
   const [selectedOrderForInvoice, setSelectedOrderForInvoice] = useState<Order | null>(INITIAL_ORDERS[0]);
@@ -262,12 +262,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           product,
           quantity,
           selectedSize: size || product.sizes[0] || 'Standard',
-          selectedColor: color || product.colors[0]?.nameBn || 'Standard',
+          selectedColor: color || product.colors[0]?.name || 'Standard',
           unitPrice: product.price
         }
       ];
     });
-    showToast(`${product.nameBn} কার্টে যোগ করা হয়েছে!`);
+    showToast(`"${product.name}" added to cart!`);
   };
 
   const updateCartQuantity = (itemId: string, delta: number) => {
@@ -286,7 +286,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const removeFromCart = (itemId: string) => {
     setCart(prev => prev.filter(item => item.id !== itemId));
-    showToast('পণ্য কার্ট থেকে অপসারিত হয়েছে', 'info');
+    showToast('Item removed from cart', 'info');
   };
 
   const clearCart = () => {
@@ -297,10 +297,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setWishlist(prev => {
       const exists = prev.includes(productId);
       if (exists) {
-        showToast('উইশলিস্ট থেকে সরানো হয়েছে', 'info');
+        showToast('Removed from wishlist', 'info');
         return prev.filter(id => id !== productId);
       } else {
-        showToast('উইশলিস্টে যুক্ত করা হয়েছে!');
+        showToast('Added to wishlist!');
         return [...prev, productId];
       }
     });
@@ -330,21 +330,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 
     const now = new Date();
-    const formattedDate = `${now.getDate()} অক্টোবর ২০২৪, ${now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' })}`;
+    const formattedDate = now.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
 
     const newOrder: Order = {
       id: `ord-${Date.now()}`,
       orderNumber: orderNum,
       invoiceNumber: invNum,
       createdAt: formattedDate,
-      customerName: orderData.customerName || 'তানভীর আহমেদ',
+      customerName: orderData.customerName || 'Customer',
       customerPhone: orderData.customerPhone || '01712-345678',
       alternativePhone: orderData.alternativePhone,
       customerEmail: orderData.customerEmail,
-      division: orderData.division || 'ঢাকা (Dhaka)',
-      district: orderData.district || 'ঢাকা মেট্রো (Dhaka City)',
-      thana: orderData.thana || 'মিরপুর-১০ (Mirpur 10)',
-      address: orderData.address || 'বাড়ি-১২, রোড-৪, ব্লক-সি, মিরপুর-১০, ঢাকা-১২১৬',
+      division: orderData.division || 'Dhaka',
+      district: orderData.district || 'Dhaka City',
+      thana: orderData.thana || 'Mirpur 10',
+      address: orderData.address || 'House #12, Road #4, Mirpur 10, Dhaka',
       deliveryZone: orderData.deliveryZone || 'dhaka_metro',
       deliveryFee: orderData.deliveryFee ?? 60,
       deliveryInstruction: orderData.deliveryInstruction,
@@ -360,14 +366,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       courier: 'steadfast',
       consignmentId: `ST-${Math.floor(10000 + Math.random() * 90000)}`,
       trackingNumber: `ST-${Math.floor(10000 + Math.random() * 90000)}`,
-      trackingStatus: 'প্যাকেজিং ও প্রস্তুত (Ready for Dispatch)',
+      trackingStatus: 'Ready for Dispatch',
       codAmount: orderData.paymentMethod === 'cod' ? (orderData.total || 0) : 0
     };
 
     setOrders(prev => [newOrder, ...prev]);
     setActiveOrder(newOrder);
     clearCart();
-    showToast(`অর্ডার ${orderNum} সফলভাবে গ্রহণ করা হয়েছে!`);
+    showToast(`Order ${orderNum} placed successfully!`);
     return newOrder;
   };
 
@@ -389,7 +395,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return ord;
       })
     );
-    showToast(`অর্ডারের স্ট্যাটাস পরিবর্তন হয়েছে: ${status}`);
+    showToast(`Order status updated: ${status}`);
   };
 
   const assignCourierConsignment = (orderId: string, courier: CourierProvider, trackingNo?: string) => {
@@ -402,14 +408,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             courier,
             consignmentId: generatedTracking,
             trackingNumber: generatedTracking,
-            trackingStatus: 'কুরিয়ারে পিকআপ প্রস্তুত',
+            trackingStatus: 'Ready for Courier Pickup',
             status: 'processing'
           };
         }
         return ord;
       })
     );
-    showToast(`কুরিয়ার পার্সেল তৈরি হয়েছে (${courier})`);
+    showToast(`Courier consignment created (${courier})`);
   };
 
   const bulkDispatchOrders = (orderIds: string[]) => {
@@ -422,21 +428,21 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             courier: 'steadfast',
             consignmentId: tracking,
             trackingNumber: tracking,
-            trackingStatus: 'ইন-ট্রানজিট (কুরিয়ার পিকআপ সম্পন্ন)',
+            trackingStatus: 'In Transit (Courier Picked Up)',
             status: 'shipped'
           };
         }
         return ord;
       })
     );
-    showToast(`${orderIds.length}টি পার্সেল সফলভাবে Steadfast কুরিয়ারে বুকিং করা হয়েছে!`);
+    showToast(`${orderIds.length} parcels booked with Steadfast Courier!`);
   };
 
   const addOrderNote = (orderId: string, note: string) => {
     setOrders(prev =>
       prev.map(ord => (ord.id === orderId ? { ...ord, internalNotes: note } : ord))
     );
-    showToast('অ্যাডমিন নোট সংরক্ষিত হয়েছে');
+    showToast('Admin note saved');
   };
 
   // Product Admin
@@ -450,7 +456,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
       return [product, ...prev];
     });
-    showToast('পণ্য সফলভাবে সংরক্ষিত হয়েছে!');
+    showToast('Product saved successfully!');
   };
 
   const deleteProduct = (productId: string) => {
@@ -459,20 +465,20 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return remaining;
     });
     setActiveProduct(prev => (prev?.id === productId ? null : prev));
-    showToast('পণ্যটি সফলভাবে মুছে ফেলা হয়েছে!', 'info');
+    showToast('Product deleted successfully!', 'info');
   };
 
   const adjustStock = (productId: string, newStock: number) => {
     setProducts(prev =>
       prev.map(p => (p.id === productId ? { ...p, stock: newStock } : p))
     );
-    showToast('স্টক আপডেট করা হয়েছে');
+    showToast('Stock updated successfully');
   };
 
   // Settings
   const updateSettings = (newSettings: Partial<StoreSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
-    showToast('ওয়েবসাইট সেটিংস সংরক্ষিত হয়েছে');
+    showToast('Store settings saved successfully');
   };
 
   // Admin Auth
@@ -484,7 +490,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         // Initial setup enforcement
         setMustChangePassword(true);
         localStorage.setItem('lotus_admin_must_change_pass', 'true');
-        return { success: true, message: 'প্রাথমিক লগইন সফল! অনুগ্রহ করে এখনই পাসওয়ার্ড পরিবর্তন করুন।' };
+        return { success: true, message: 'Initial login successful! Please update your password.' };
       }
       // Check if user changed password before
       const savedPass = localStorage.getItem('lotus_admin_pass');
@@ -493,28 +499,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         localStorage.setItem('lotus_admin_logged_in', 'true');
         setMustChangePassword(false);
         localStorage.setItem('lotus_admin_must_change_pass', 'false');
-        return { success: true, message: 'অ্যাডমিন কনসোলে স্বাগতম!' };
+        return { success: true, message: 'Welcome to Admin Console!' };
       }
     }
-    return { success: false, message: 'ভুল ইউজারনেম বা পাসওয়ার্ড!' };
+    return { success: false, message: 'Invalid username or password!' };
   };
 
   const logoutAdmin = () => {
     setIsAdminLoggedIn(false);
     localStorage.removeItem('lotus_admin_logged_in');
-    showToast('অ্যাডমিন কনসোল থেকে লগ আউট হয়েছে', 'info');
+    showToast('Logged out from Admin Console', 'info');
   };
 
   const changeAdminPassword = (newPass: string) => {
     if (!newPass || newPass.length < 6 || newPass === '123456') {
-      showToast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে এবং 123456 হওয়া যাবে না', 'error');
+      showToast('Password must be at least 6 characters and cannot be 123456', 'error');
       return false;
     }
     localStorage.setItem('lotus_admin_pass', newPass);
     localStorage.setItem('lotus_admin_must_change_pass', 'false');
     setMustChangePassword(false);
     setAdminUser(prev => prev ? { ...prev, isFirstLogin: false } : null);
-    showToast('অ্যাডমিন পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!');
+    showToast('Admin password updated successfully!');
     return true;
   };
 

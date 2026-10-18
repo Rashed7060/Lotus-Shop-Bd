@@ -3,216 +3,206 @@ import React from 'react';
 interface LogoProps {
   className?: string;
   variant?: 'full' | 'horizontal' | 'icon';
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   inverted?: boolean;
 }
 
 export const Logo: React.FC<LogoProps> = ({
   className = '',
-  variant = 'horizontal',
   size = 'md',
   inverted = false
 }) => {
-  // Dimension presets
-  const iconSizes = {
-    sm: 'w-8 h-8',
-    md: 'w-10 h-10',
-    lg: 'w-14 h-14',
-    xl: 'w-20 h-20'
+  // Height presets for the unified logo (keeping 600:560 ratio) - Made bigger and prominent
+  const sizeClasses: Record<string, string> = {
+    sm: 'h-12 sm:h-14',
+    md: 'h-20 sm:h-24 md:h-28',
+    lg: 'h-28 sm:h-34 md:h-40',
+    xl: 'h-36 sm:h-44 md:h-52',
+    '2xl': 'h-48 sm:h-60 md:h-72'
   };
 
-  const leafColor = inverted ? '#E5E7EB' : '#111111';
+  const primaryPetalColor = inverted ? '#FFFFFF' : '#111111';
+  const textColor = inverted ? '#FFFFFF' : '#111111';
+  const taglineColor = inverted ? '#E5E7EB' : '#111111';
+  const diamondColor = inverted ? '#FBBF24' : '#111111';
+  const dropletInnerColor = inverted ? '#1A1A1A' : '#FFFFFF';
+  const gradIdSuffix = inverted ? 'Inv' : 'Std';
 
-  const LotusIcon = () => (
-    <svg
-      viewBox="0 0 500 380"
-      className="w-full h-full drop-shadow-xs"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id="lotusFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#EA580C" />
-          <stop offset="50%" stopColor="#F97316" />
-          <stop offset="100%" stopColor="#FBBF24" />
-        </linearGradient>
-        <linearGradient id="lotusWingGrad" x1="0%" y1="50%" x2="100%" y2="50%">
-          <stop offset="0%" stopColor="#EA580C" />
-          <stop offset="50%" stopColor="#F97316" />
-          <stop offset="100%" stopColor="#FBBF24" />
-        </linearGradient>
-      </defs>
-
-      {/* TOP CENTRAL LOTUS FLAME */}
-      {/* Outer center petal */}
-      <path
-        d="M250 50 C230 110 200 170 250 240 C300 170 270 110 250 50 Z"
-        fill="url(#lotusFlameGrad)"
-      />
-      {/* Inner drop core */}
-      <path
-        d="M250 110 C240 145 228 180 250 215 C272 180 260 145 250 110 Z"
-        fill="#FFFFFF"
-      />
-      <path
-        d="M250 130 C244 152 236 175 250 198 C264 175 256 152 250 130 Z"
-        fill="url(#lotusFlameGrad)"
-      />
-
-      {/* INNER LAYER BLACK/WHITE PETALS */}
-      {/* Inner Left Leaf */}
-      <path
-        d="M235 240 C210 200 185 145 205 105 C208 140 215 185 235 240 Z"
-        fill={leafColor}
-      />
-      {/* Inner Right Leaf */}
-      <path
-        d="M265 240 C290 200 315 145 295 105 C292 140 285 185 265 240 Z"
-        fill={leafColor}
-      />
-
-      {/* MID LAYER PETALS */}
-      {/* Mid Left Petal */}
-      <path
-        d="M225 242 C165 210 115 130 170 100 C155 145 180 205 225 242 Z"
-        fill={leafColor}
-      />
-      {/* Mid Right Petal */}
-      <path
-        d="M275 242 C335 210 385 130 330 100 C345 145 320 205 275 242 Z"
-        fill={leafColor}
-      />
-
-      {/* OUTER ACCENT PETALS */}
-      {/* Far Left Petal */}
-      <path
-        d="M175 220 C110 200 90 140 140 145 C115 175 145 205 175 220 Z"
-        fill={leafColor}
-      />
-      {/* Far Right Petal */}
-      <path
-        d="M325 220 C390 200 410 140 360 145 C385 175 355 205 325 220 Z"
-        fill={leafColor}
-      />
-
-      {/* BOTTOM BASE WING PETALS (GRADIENT ORANGE) */}
-      {/* Left Wing */}
-      <path
-        d="M250 270 C180 270 110 210 115 260 C150 315 225 285 250 270 Z"
-        fill="url(#lotusWingGrad)"
-      />
-      {/* Right Wing */}
-      <path
-        d="M250 270 C320 270 390 210 385 260 C350 315 275 285 250 270 Z"
-        fill="url(#lotusWingGrad)"
-      />
-    </svg>
-  );
-
-  // Variant: Icon Only
-  if (variant === 'icon') {
-    return (
-      <div className={`${iconSizes[size]} ${className} inline-flex items-center justify-center shrink-0`}>
-        <LotusIcon />
-      </div>
-    );
-  }
-
-  // Variant: Full Stacked (Symbol + Wordmark + Taglines)
-  if (variant === 'full') {
-    return (
-      <div className={`flex flex-col items-center text-center ${className}`}>
-        {/* Lotus Symbol */}
-        <div className="w-24 h-20 mb-2">
-          <LotusIcon />
-        </div>
-
-        {/* Brand Name "LOTUS" with decorative elements */}
-        <div className="relative flex items-center justify-center">
-          <span className={`font-serif-title font-black text-4xl tracking-[0.08em] leading-none ${
-            inverted ? 'text-white' : 'text-neutral-900'
-          }`}>
-            L
-            <span className="relative inline-block mx-0.5">
-              O
-              {/* Petal flame inside O */}
-              <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="w-2 h-4 rounded-full bg-gradient-to-t from-orange-600 to-amber-400"></span>
-              </span>
-            </span>
-            TUS
-          </span>
-        </div>
-
-        {/* Divider with Center Diamond */}
-        <div className="w-full max-w-[220px] flex items-center justify-center gap-2 my-1.5">
-          <div className="h-[1px] bg-gradient-to-r from-transparent via-orange-500 to-orange-500 flex-1"></div>
-          <span className={`w-1.5 h-1.5 rotate-45 shrink-0 ${inverted ? 'bg-amber-400' : 'bg-neutral-900'}`}></span>
-          <div className="h-[1px] bg-gradient-to-l from-transparent via-orange-500 to-orange-500 flex-1"></div>
-        </div>
-
-        {/* Subtitles matching uploaded logo */}
-        <span className="text-[11px] font-extrabold tracking-[0.28em] text-orange-500 uppercase font-sans">
-          CLOTHING BRAND
-        </span>
-        <span className={`text-[8.5px] font-bold tracking-[0.25em] uppercase font-sans mt-0.5 ${
-          inverted ? 'text-gray-300' : 'text-neutral-800'
-        }`}>
-          WE TRUST IN QUALITY
-        </span>
-      </div>
-    );
-  }
-
-  // Variant: Horizontal (Default - Ideal for Navbar & Header)
   return (
-    <div className={`flex items-center gap-3 ${className} text-left select-none`}>
-      {/* Lotus Symbol */}
-      <div className={`${iconSizes[size]} shrink-0 flex items-center justify-center`}>
-        <LotusIcon />
-      </div>
+    <div
+      className={`inline-flex items-center justify-center shrink-0 ${sizeClasses[size] || ''} ${className}`}
+      title="Lotus Clothing Brand - We Trust In Quality"
+    >
+      <svg
+        viewBox="0 0 600 560"
+        className="h-full w-auto max-w-full drop-shadow-xs select-none"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id={`lotusFlameGrad_${gradIdSuffix}`} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#FBBF24" />
+            <stop offset="35%" stopColor="#F59E0B" />
+            <stop offset="70%" stopColor="#EA580C" />
+            <stop offset="100%" stopColor="#C2410C" />
+          </linearGradient>
 
-      {/* Brand Typography matching user's uploaded logo */}
-      <div className="flex flex-col justify-center">
-        {/* Main "LOTUS" wordmark */}
-        <div className="flex items-center">
-          <span className={`font-serif-title font-black text-2xl tracking-[0.06em] leading-none ${
-            inverted ? 'text-white' : 'text-neutral-900'
-          }`}>
-            L
-            <span className="relative inline-block mx-0.5">
-              O
-              {/* Small Petal inside O */}
-              <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="w-1.5 h-3 rounded-full bg-gradient-to-t from-orange-600 to-amber-400"></span>
-              </span>
-            </span>
-            TUS
-          </span>
-          <span className="ml-1.5 text-[9px] font-bold bg-rose-600 text-white px-1 py-0.2 rounded uppercase tracking-wider">
-            BD
-          </span>
-        </div>
+          <linearGradient id={`lotusWingGrad_${gradIdSuffix}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#EA580C" />
+            <stop offset="50%" stopColor="#F59E0B" />
+            <stop offset="100%" stopColor="#FBBF24" />
+          </linearGradient>
+          <linearGradient id={`lotusWingGradRight_${gradIdSuffix}`} x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#EA580C" />
+            <stop offset="50%" stopColor="#F59E0B" />
+            <stop offset="100%" stopColor="#FBBF24" />
+          </linearGradient>
+        </defs>
 
-        {/* Decorative Divider */}
-        <div className="w-full flex items-center gap-1.5 my-0.5">
-          <div className="h-[1px] bg-orange-400 flex-1"></div>
-          <span className={`w-1 h-1 rotate-45 shrink-0 ${inverted ? 'bg-amber-400' : 'bg-neutral-900'}`}></span>
-          <div className="h-[1px] bg-orange-400 flex-1"></div>
-        </div>
+        {/* 1. TOP LOTUS EMBLEM (ALL PETALS TOGETHER) */}
+        <g id="lotus-flower-emblem">
+          {/* CENTER FLAME: Outer Petal */}
+          <path
+            d="M300 15 C265 85 225 170 300 248 C375 170 335 85 300 15 Z"
+            fill={`url(#lotusFlameGrad_${gradIdSuffix})`}
+          />
 
-        {/* Brand Tagline */}
-        <div className="flex flex-col -space-y-0.5">
-          <span className="text-[7.5px] font-extrabold tracking-[0.24em] text-orange-500 uppercase leading-tight font-sans">
+          {/* CENTER FLAME: Teardrop Cutout */}
+          <path
+            d="M300 75 C282 120 262 165 300 215 C338 165 318 120 300 75 Z"
+            fill={dropletInnerColor}
+          />
+
+          {/* CENTER FLAME: Inner Flame Core */}
+          <path
+            d="M300 102 C290 135 278 165 300 195 C322 165 310 135 300 102 Z"
+            fill={`url(#lotusFlameGrad_${gradIdSuffix})`}
+          />
+
+          {/* INNER PETALS (hugging the flame) */}
+          <path
+            d="M282 248 C248 195 220 130 248 78 C252 120 260 178 282 248 Z"
+            fill={primaryPetalColor}
+          />
+          <path
+            d="M318 248 C352 195 380 130 352 78 C348 120 340 178 318 248 Z"
+            fill={primaryPetalColor}
+          />
+
+          {/* MID TALL PETALS (graceful tall curves) */}
+          <path
+            d="M272 254 C195 218 135 125 202 85 C185 142 220 212 272 254 Z"
+            fill={primaryPetalColor}
+          />
+          <path
+            d="M328 254 C405 218 465 125 398 85 C415 142 380 212 328 254 Z"
+            fill={primaryPetalColor}
+          />
+
+          {/* OUTER PETALS (side wings) */}
+          <path
+            d="M215 230 C132 208 102 142 165 148 C132 184 172 220 215 230 Z"
+            fill={primaryPetalColor}
+          />
+          <path
+            d="M385 230 C468 208 498 142 435 148 C468 184 428 220 385 230 Z"
+            fill={primaryPetalColor}
+          />
+
+          {/* FAR ACCENT PETAL TIPS */}
+          <path
+            d="M178 222 C98 210 82 160 138 175 C102 206 142 226 178 222 Z"
+            fill={primaryPetalColor}
+          />
+          <path
+            d="M422 222 C502 210 518 160 462 175 C498 206 458 226 422 222 Z"
+            fill={primaryPetalColor}
+          />
+
+          {/* BOTTOM ORANGE HORIZONTAL WING PETALS */}
+          <path
+            d="M300 282 C225 282 135 210 140 265 C185 325 272 296 300 282 Z"
+            fill={`url(#lotusWingGrad_${gradIdSuffix})`}
+          />
+          <path
+            d="M300 282 C375 282 465 210 460 265 C415 325 328 296 300 282 Z"
+            fill={`url(#lotusWingGradRight_${gradIdSuffix})`}
+          />
+        </g>
+
+        {/* 2. "LOTUS" WORDMARK (WITH CUSTOM INTEGRATED EMBLEMS) */}
+        <g id="lotus-wordmark">
+          {/* Main LOTUS Serif Letters */}
+          <text
+            x="300"
+            y="382"
+            textAnchor="middle"
+            fontFamily="'Playfair Display', 'Bodoni MT', 'Didot', 'Georgia', serif"
+            fontSize="94"
+            fontWeight="900"
+            letterSpacing="18"
+            fill={textColor}
+          >
+            LOTUS
+          </text>
+
+          {/* Custom Orange Swoosh under 'L' */}
+          <path
+            d="M72 388 C 112 396 150 376 175 390 C 135 408 85 402 62 391 Z"
+            fill={`url(#lotusFlameGrad_${gradIdSuffix})`}
+          />
+
+          {/* Custom Orange Flame inside 'O' counter */}
+          <path
+            d="M232 334 C 223 350 221 364 232 374 C 243 364 241 350 232 334 Z"
+            fill={`url(#lotusFlameGrad_${gradIdSuffix})`}
+          />
+
+          {/* Custom Orange Leaf inside bottom curve of 'S' */}
+          <path
+            d="M482 365 C 496 360 512 376 488 391 C 504 380 492 366 482 365 Z"
+            fill={`url(#lotusFlameGrad_${gradIdSuffix})`}
+          />
+        </g>
+
+        {/* 3. DIVIDER WITH CENTER DIAMOND */}
+        <g id="lotus-divider">
+          <line x1="80" y1="418" x2="278" y2="418" stroke="#EA580C" strokeWidth="2.2" strokeLinecap="round" />
+          <polygon points="300,409 309,418 300,427 291,418" fill={diamondColor} />
+          <line x1="322" y1="418" x2="520" y2="418" stroke="#EA580C" strokeWidth="2.2" strokeLinecap="round" />
+        </g>
+
+        {/* 4. SUBTITLES (CLOTHING BRAND & WE TRUST IN QUALITY) */}
+        <g id="lotus-subtitles">
+          {/* "CLOTHING BRAND" in Vibrant Orange */}
+          <text
+            x="300"
+            y="456"
+            textAnchor="middle"
+            fontFamily="'Montserrat', 'Poppins', 'Inter', sans-serif"
+            fontSize="24"
+            fontWeight="800"
+            letterSpacing="11"
+            fill={inverted ? '#F59E0B' : '#EA580C'}
+          >
             CLOTHING BRAND
-          </span>
-          <span className={`text-[6px] font-bold tracking-[0.22em] uppercase leading-tight font-sans ${
-            inverted ? 'text-gray-300' : 'text-neutral-700'
-          }`}>
+          </text>
+
+          {/* "WE TRUST IN QUALITY" */}
+          <text
+            x="300"
+            y="488"
+            textAnchor="middle"
+            fontFamily="'Montserrat', 'Poppins', 'Inter', sans-serif"
+            fontSize="16"
+            fontWeight="800"
+            letterSpacing="8"
+            fill={taglineColor}
+          >
             WE TRUST IN QUALITY
-          </span>
-        </div>
-      </div>
+          </text>
+        </g>
+      </svg>
     </div>
   );
 };

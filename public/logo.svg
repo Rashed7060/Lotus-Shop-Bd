@@ -1,58 +1,190 @@
-<svg viewBox="0 0 500 480" width="500" height="480" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 600 560" width="600" height="560" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="lotusFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+    <!-- Flame Gradient: Yellow/Amber to Deep Orange -->
+    <linearGradient id="flameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="35%" stop-color="#F59E0B" />
+      <stop offset="70%" stop-color="#EA580C" />
+      <stop offset="100%" stop-color="#C2410C" />
+    </linearGradient>
+
+    <!-- Wing Gradient -->
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#EA580C" />
-      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="50%" stop-color="#F59E0B" />
       <stop offset="100%" stop-color="#FBBF24" />
     </linearGradient>
-    <linearGradient id="lotusWingGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+    <linearGradient id="wingGradRight" x1="100%" y1="0%" x2="0%" y2="0%">
       <stop offset="0%" stop-color="#EA580C" />
-      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="50%" stop-color="#F59E0B" />
       <stop offset="100%" stop-color="#FBBF24" />
     </linearGradient>
   </defs>
 
-  <!-- TOP CENTRAL LOTUS FLAME -->
-  <path d="M250 40 C230 100 200 160 250 230 C300 160 270 100 250 40 Z" fill="url(#lotusFlameGrad)" />
-  <path d="M250 100 C240 135 228 170 250 205 C272 170 260 135 250 100 Z" fill="#FFFFFF" />
-  <path d="M250 120 C244 142 236 165 250 188 C264 165 256 142 250 120 Z" fill="url(#lotusFlameGrad)" />
+  <!-- ============================================================ -->
+  <!-- 1. TOP LOTUS EMBLEM (ALL PETALS TOGETHER)                    -->
+  <!-- ============================================================ -->
+  <g id="lotus-flower-emblem">
+    <!-- CENTER FLAME: Outer Petal -->
+    <path
+      d="M300 15 C265 85 225 170 300 248 C375 170 335 85 300 15 Z"
+      fill="url(#flameGrad)"
+    />
 
-  <!-- INNER LAYER BLACK PETALS -->
-  <path d="M235 230 C210 190 185 135 205 95 C208 130 215 175 235 230 Z" fill="#111111" />
-  <path d="M265 230 C290 190 315 135 295 95 C292 130 285 175 265 230 Z" fill="#111111" />
+    <!-- CENTER FLAME: White Teardrop Cutout -->
+    <path
+      d="M300 75 C282 120 262 165 300 215 C338 165 318 120 300 75 Z"
+      fill="#FFFFFF"
+    />
 
-  <!-- MID LAYER BLACK PETALS -->
-  <path d="M225 232 C165 200 115 120 170 90 C155 135 180 195 225 232 Z" fill="#111111" />
-  <path d="M275 232 C335 200 385 120 330 90 C345 135 320 195 275 232 Z" fill="#111111" />
+    <!-- CENTER FLAME: Inner Flame Core -->
+    <path
+      d="M300 102 C290 135 278 165 300 195 C322 165 310 135 300 102 Z"
+      fill="url(#flameGrad)"
+    />
 
-  <!-- OUTER ACCENT BLACK PETALS -->
-  <path d="M175 210 C110 190 90 130 140 135 C115 165 145 195 175 210 Z" fill="#111111" />
-  <path d="M325 210 C390 190 410 130 360 135 C385 165 355 195 325 210 Z" fill="#111111" />
+    <!-- INNER BLACK PETALS (hugging the flame) -->
+    <!-- Left Inner -->
+    <path
+      d="M282 248 C248 195 220 130 248 78 C252 120 260 178 282 248 Z"
+      fill="#111111"
+    />
+    <!-- Right Inner -->
+    <path
+      d="M318 248 C352 195 380 130 352 78 C348 120 340 178 318 248 Z"
+      fill="#111111"
+    />
 
-  <!-- BOTTOM BASE WING PETALS -->
-  <path d="M250 260 C180 260 110 200 115 250 C150 305 225 275 250 260 Z" fill="url(#lotusWingGrad)" />
-  <path d="M250 260 C320 260 390 200 385 250 C350 305 275 275 250 260 Z" fill="url(#lotusWingGrad)" />
+    <!-- MID TALL BLACK PETALS (graceful tall curves) -->
+    <!-- Left Mid-Tall -->
+    <path
+      d="M272 254 C195 218 135 125 202 85 C185 142 220 212 272 254 Z"
+      fill="#111111"
+    />
+    <!-- Right Mid-Tall -->
+    <path
+      d="M328 254 C405 218 465 125 398 85 C415 142 380 212 328 254 Z"
+      fill="#111111"
+    />
 
-  <!-- WORDMARK: LOTUS -->
-  <g font-family="'Playfair Display', Georgia, serif" font-weight="900" font-size="78" fill="#111111" text-anchor="middle">
-    <text x="250" y="365" letter-spacing="12">LOTUS</text>
+    <!-- OUTER BLACK PETALS (side wings) -->
+    <!-- Left Outer -->
+    <path
+      d="M215 230 C132 208 102 142 165 148 C132 184 172 220 215 230 Z"
+      fill="#111111"
+    />
+    <!-- Right Outer -->
+    <path
+      d="M385 230 C468 208 498 142 435 148 C468 184 428 220 385 230 Z"
+      fill="#111111"
+    />
+
+    <!-- FAR ACCENT BLACK TIPS -->
+    <!-- Far Left -->
+    <path
+      d="M178 222 C98 210 82 160 138 175 C102 206 142 226 178 222 Z"
+      fill="#111111"
+    />
+    <!-- Far Right -->
+    <path
+      d="M422 222 C502 210 518 160 462 175 C498 206 458 226 422 222 Z"
+      fill="#111111"
+    />
+
+    <!-- BOTTOM ORANGE HORIZONTAL WING PETALS -->
+    <!-- Left Wing -->
+    <path
+      d="M300 282 C225 282 135 210 140 265 C185 325 272 296 300 282 Z"
+      fill="url(#wingGrad)"
+    />
+    <!-- Right Wing -->
+    <path
+      d="M300 282 C375 282 465 210 460 265 C415 325 328 296 300 282 Z"
+      fill="url(#wingGradRight)"
+    />
   </g>
 
-  <!-- FLAME IN O -->
-  <ellipse cx="206" cy="336" rx="5" ry="12" fill="url(#lotusFlameGrad)" />
+  <!-- ============================================================ -->
+  <!-- 2. "LOTUS" WORDMARK (WITH CUSTOM INTEGRATED EMBLEMS)          -->
+  <!-- ============================================================ -->
+  <g id="lotus-wordmark">
+    <!-- Main LOTUS Letters (High contrast serif typeface) -->
+    <text
+      x="300"
+      y="382"
+      text-anchor="middle"
+      font-family="'Playfair Display', 'Bodoni MT', 'Didot', 'Georgia', serif"
+      font-size="94"
+      font-weight="900"
+      letter-spacing="18"
+      fill="#111111"
+    >
+      LOTUS
+    </text>
 
-  <!-- DIVIDER WITH DIAMOND -->
-  <line x1="120" y1="390" x2="235" y2="390" stroke="#EA580C" stroke-width="1.5" />
-  <polygon points="250,385 255,390 250,395 245,390" fill="#111111" />
-  <line x1="265" y1="390" x2="380" y2="390" stroke="#EA580C" stroke-width="1.5" />
+    <!-- Custom Orange Swoosh under 'L' -->
+    <path
+      d="M72 388 C 112 396 150 376 175 390 C 135 408 85 402 62 391 Z"
+      fill="url(#flameGrad)"
+    />
 
-  <!-- CLOTHING BRAND -->
-  <text x="250" y="420" font-family="'Poppins', 'Montserrat', sans-serif" font-weight="800" font-size="20" fill="#EA580C" text-anchor="middle" letter-spacing="8">
-    CLOTHING BRAND
-  </text>
+    <!-- Custom Orange Flame inside 'O' counter -->
+    <path
+      d="M232 334 C 223 350 221 364 232 374 C 243 364 241 350 232 334 Z"
+      fill="url(#flameGrad)"
+    />
 
-  <!-- WE TRUST IN QUALITY -->
-  <text x="250" y="445" font-family="'Poppins', 'Montserrat', sans-serif" font-weight="700" font-size="14" fill="#222222" text-anchor="middle" letter-spacing="6">
-    WE TRUST IN QUALITY
-  </text>
+    <!-- Custom Orange Leaf inside bottom curve of 'S' -->
+    <path
+      d="M482 365 C 496 360 512 376 488 391 C 504 380 492 366 482 365 Z"
+      fill="url(#flameGrad)"
+    />
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- 3. DIVIDER WITH CENTER DIAMOND                               -->
+  <!-- ============================================================ -->
+  <g id="lotus-divider">
+    <!-- Left Orange Rule -->
+    <line x1="80" y1="418" x2="278" y2="418" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round" />
+    
+    <!-- Central Black Diamond -->
+    <polygon points="300,409 309,418 300,427 291,418" fill="#111111" />
+    
+    <!-- Right Orange Rule -->
+    <line x1="322" y1="418" x2="520" y2="418" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round" />
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- 4. SUBTITLES (CLOTHING BRAND & WE TRUST IN QUALITY)          -->
+  <!-- ============================================================ -->
+  <g id="lotus-subtitles">
+    <!-- "CLOTHING BRAND" in Vibrant Orange -->
+    <text
+      x="300"
+      y="456"
+      text-anchor="middle"
+      font-family="'Montserrat', 'Poppins', 'Inter', sans-serif"
+      font-size="24"
+      font-weight="800"
+      letter-spacing="11"
+      fill="#EA580C"
+    >
+      CLOTHING BRAND
+    </text>
+
+    <!-- "WE TRUST IN QUALITY" in Deep Black -->
+    <text
+      x="300"
+      y="488"
+      text-anchor="middle"
+      font-family="'Montserrat', 'Poppins', 'Inter', sans-serif"
+      font-size="16"
+      font-weight="800"
+      letter-spacing="8"
+      fill="#111111"
+    >
+      WE TRUST IN QUALITY
+    </text>
+  </g>
 </svg>

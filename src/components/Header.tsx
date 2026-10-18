@@ -227,7 +227,7 @@ export const Header: React.FC<{ onSearch?: (query: string) => void }> = ({ onSea
       </div>
 
       {/* Main Header */}
-      <header className="bg-white border-b border-gray-100 py-3 shadow-xs sticky top-0 z-40">
+      <header className="bg-white border-b border-gray-100 py-2 sm:py-2.5 shadow-xs sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 sm:gap-6">
           
           {/* Logo Area */}
@@ -237,10 +237,10 @@ export const Header: React.FC<{ onSearch?: (query: string) => void }> = ({ onSea
               if (onSearch) onSearch('');
               setSearchQuery('');
             }}
-            className="flex items-center flex-shrink-0 text-left cursor-pointer group hover:opacity-95 transition-opacity"
+            className="flex items-center flex-shrink-0 text-left cursor-pointer group hover:opacity-95 transition-all duration-200 py-0.5"
             title="Lotus Shop BD - হোমপেজ"
           >
-            <Logo variant="horizontal" size="md" />
+            <Logo size="md" />
           </button>
 
           {/* Desktop Search Bar with Live Instant Autocomplete Dropdown */}

@@ -31,7 +31,7 @@ export const BestSellers: React.FC = () => {
   const handleAddToCart = (e: React.MouseEvent, prod: Product) => {
     e.stopPropagation();
     addToCart(prod, 1, prod.sizes?.[0], prod.colors?.[0]?.name);
-    showToast(`"${prod.nameBn || prod.name}" কার্টে যোগ করা হয়েছে`, 'success');
+    showToast(`"${prod.name}" added to cart`, 'success');
   };
 
   if (displayProducts.length === 0) return null;
@@ -43,14 +43,14 @@ export const BestSellers: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold uppercase tracking-wider mb-2">
             <span className="material-symbols-outlined text-sm text-amber-500">local_fire_department</span>
-            <span>গ্রাহকদের পছন্দের শীর্ষে</span>
+            <span>Customer Favorites</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
             <span>Best Sellers</span>
-            <span className="text-amber-500 text-lg font-bn font-normal">/ সেরা বিক্রিত পণ্যসমূহ</span>
+            <span className="text-amber-500 text-lg font-normal">/ Top Rated</span>
           </h2>
-          <p className="text-gray-500 font-bn text-sm mt-1">
-            সবচেয়ে বেশি অর্ডার ও সর্বোচ্চ ইতিবাচক রিভিউ পাওয়া প্রিমিয়াম কালেকশন
+          <p className="text-gray-500 text-sm mt-1">
+            Our most popular and highest rated premium items, loved by thousands of shoppers.
           </p>
         </div>
 
@@ -59,9 +59,9 @@ export const BestSellers: React.FC = () => {
             const el = document.getElementById('new-arrivals-section');
             if (el) el.scrollIntoView({ behavior: 'smooth' });
           }}
-          className="inline-flex items-center text-xs font-bold text-amber-600 hover:text-amber-700 font-bn group cursor-pointer"
+          className="inline-flex items-center text-xs font-bold text-amber-600 hover:text-amber-700 group cursor-pointer"
         >
-          <span>সব কালেকশন দেখুন</span>
+          <span>View All Products</span>
           <span className="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">
             arrow_forward
           </span>
@@ -98,8 +98,8 @@ export const BestSellers: React.FC = () => {
                     <span>#{idx + 1} Best Seller</span>
                   </span>
                   {discountPercent > 0 && (
-                    <span className="inline-block bg-red-600 text-white font-bold text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full shadow-md font-bn">
-                      {discountPercent}% ছাড়
+                    <span className="inline-block bg-red-600 text-white font-bold text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full shadow-md">
+                      {discountPercent}% OFF
                     </span>
                   )}
                 </div>
@@ -115,7 +115,7 @@ export const BestSellers: React.FC = () => {
                       ? 'bg-red-50 text-red-500 border border-red-200'
                       : 'bg-white/90 hover:bg-white text-gray-500 hover:text-red-500'
                   }`}
-                  title={isInWishlist ? 'পছন্দের তালিকা থেকে সরান' : 'পছন্দের তালিকায় রাখুন'}
+                  title={isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
                 >
                   <span className={`material-symbols-outlined text-sm ${isInWishlist ? 'material-symbols-fill text-red-500' : ''}`}>
                     favorite
@@ -124,8 +124,8 @@ export const BestSellers: React.FC = () => {
 
                 {/* Stock alert pill if low stock */}
                 {product.stock <= 5 && product.stock > 0 && (
-                  <div className="absolute bottom-2 left-2 right-2 bg-black/75 backdrop-blur-xs text-amber-300 text-[10px] sm:text-xs py-0.5 px-2 rounded font-bn text-center font-medium">
-                    মাত্র {product.stock} টি অবশিষ্ট আছে!
+                  <div className="absolute bottom-2 left-2 right-2 bg-black/75 backdrop-blur-xs text-amber-300 text-[10px] sm:text-xs py-0.5 px-2 rounded text-center font-medium">
+                    Only {product.stock} left in stock!
                   </div>
                 )}
               </div>
@@ -134,7 +134,7 @@ export const BestSellers: React.FC = () => {
               <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between text-[11px] text-gray-500 mb-1">
-                    <span className="font-medium text-amber-600">{product.category}</span>
+                    <span className="font-semibold text-amber-600">{product.category}</span>
                     <div className="flex items-center text-amber-500 gap-0.5">
                       <span className="material-symbols-outlined text-xs material-symbols-fill">star</span>
                       <span className="font-semibold text-gray-700">{product.rating || '4.8'}</span>
@@ -143,10 +143,10 @@ export const BestSellers: React.FC = () => {
                   </div>
 
                   <h3 className="font-bold text-gray-900 text-sm sm:text-base line-clamp-1 group-hover:text-amber-600 transition-colors">
-                    {product.nameBn || product.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 line-clamp-1 font-bn mt-0.5">
                     {product.name}
+                  </h3>
+                  <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                    SKU: {product.sku} • {product.brand}
                   </p>
                 </div>
 
@@ -154,11 +154,11 @@ export const BestSellers: React.FC = () => {
                 <div className="mt-3 pt-2.5 border-t border-gray-100">
                   <div className="flex items-baseline gap-2">
                     <span className="text-base sm:text-lg font-extrabold text-gray-900 font-data-tabular">
-                      ৳{product.price.toLocaleString('bn-BD')}
+                      ৳{product.price.toLocaleString('en-US')}
                     </span>
                     {product.regularPrice > product.price && (
                       <span className="text-xs text-gray-400 line-through font-data-tabular">
-                        ৳{product.regularPrice.toLocaleString('bn-BD')}
+                        ৳{product.regularPrice.toLocaleString('en-US')}
                       </span>
                     )}
                   </div>
@@ -167,16 +167,16 @@ export const BestSellers: React.FC = () => {
                   <div className="mt-3 grid grid-cols-2 gap-1.5 sm:gap-2">
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
-                      className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bn text-xs font-semibold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                      className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">add_shopping_cart</span>
-                      <span className="hidden xs:inline">কার্ট</span>
+                      <span>Cart</span>
                     </button>
                     <button
                       onClick={(e) => handleDirectBuy(e, product)}
-                      className="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bn text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 shadow-xs transition-colors cursor-pointer"
+                      className="bg-amber-500 hover:bg-amber-600 text-neutral-900 text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 shadow-xs transition-colors cursor-pointer"
                     >
-                      <span>অর্ডার করুন</span>
+                      <span>Buy Now</span>
                       <span className="material-symbols-outlined text-sm">bolt</span>
                     </button>
                   </div>

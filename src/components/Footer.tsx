@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
           {/* Column 1: Brand Info & Mission */}
           <div className="space-y-4">
             <button onClick={() => setActiveView('home')} className="flex items-center text-left cursor-pointer hover:opacity-90 transition-opacity">
-              <Logo variant="horizontal" size="md" inverted={true} />
+              <Logo size="lg" inverted={true} />
             </button>
             <p className="font-bn text-gray-400 text-xs leading-relaxed">
               {settings.taglineBn}<br />

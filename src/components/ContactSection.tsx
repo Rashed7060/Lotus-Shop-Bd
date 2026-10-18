@@ -8,7 +8,7 @@ export const ContactSection: React.FC = () => {
     name: '',
     phone: '',
     email: '',
-    subject: 'অর্ডার সম্পর্কিত অনুসন্ধান',
+    subject: 'Order Inquiry',
     message: ''
   });
 
@@ -17,19 +17,19 @@ export const ContactSection: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.phone.trim()) {
-      showToast('দয়া করে আপনার নাম ও ফোন নম্বর লিখুন', 'error');
+      showToast('Please enter your name and phone number', 'error');
       return;
     }
 
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      showToast('আপনার বার্তাটি সফলভাবে গৃহীত হয়েছে! আমাদের সাপোর্ট টিম দ্রুত যোগাযোগ করবে।', 'success');
+      showToast('Thank you! Your message has been sent successfully. Our support team will contact you shortly.', 'success');
       setFormData({
         name: '',
         phone: '',
         email: '',
-        subject: 'অর্ডার সম্পর্কিত অনুসন্ধান',
+        subject: 'Order Inquiry',
         message: ''
       });
     }, 600);
@@ -43,13 +43,13 @@ export const ContactSection: React.FC = () => {
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold uppercase tracking-wider mb-2">
           <span className="material-symbols-outlined text-sm text-amber-500">support_agent</span>
-          <span>২৪/৭ ডেডিকেটেড সাপোর্ট</span>
+          <span>24/7 Dedicated Support</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
           Contact <span className="text-amber-500">Lotus Shop BD</span>
         </h2>
-        <p className="font-bn text-gray-500 text-sm mt-1">
-          অর্ডার, পণ্য বা ডেলিভারি সম্পর্কিত যেকোনো প্রশ্নে আমাদের সাথে যোগাযোগ করুন
+        <p className="text-gray-500 text-sm mt-1">
+          Have questions about products, sizing, or delivery? We are here to assist you anytime.
         </p>
       </div>
 
@@ -62,8 +62,8 @@ export const ContactSection: React.FC = () => {
               <span className="material-symbols-outlined text-2xl">call</span>
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-gray-900 font-bn text-sm">হটলাইন ও কাস্টমার কেয়ার</h4>
-              <p className="text-xs text-gray-500 font-bn mb-1.5">সরাসরি কথা বলুন আমাদের প্রতিনিধির সাথে</p>
+              <h4 className="font-bold text-gray-900 text-sm">Customer Care Hotline</h4>
+              <p className="text-xs text-gray-500 mb-1.5">Speak directly with our support specialists</p>
               <a
                 href={`tel:${settings.phone}`}
                 className="inline-flex items-center gap-1.5 text-base font-bold text-gray-900 hover:text-amber-600 font-mono transition-colors"
@@ -80,15 +80,15 @@ export const ContactSection: React.FC = () => {
               <span className="material-symbols-outlined text-2xl">chat</span>
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-gray-900 font-bn text-sm">হোয়াটসঅ্যাপ সাপোর্ট (WhatsApp)</h4>
-              <p className="text-xs text-gray-500 font-bn mb-2">ছবি বা সাইজ জানতে সরাসরি চ্যাট করুন</p>
+              <h4 className="font-bold text-gray-900 text-sm">WhatsApp Live Chat</h4>
+              <p className="text-xs text-gray-500 mb-2">Message us photos, sizing questions, or instant queries</p>
               <a
-                href={`https://wa.me/${whatsappClean}?text=${encodeURIComponent('হ্যালো Lotus Shop BD! আমি একটি পণ্য সম্পর্কে জানতে চাই।')}`}
+                href={`https://wa.me/${whatsappClean}?text=${encodeURIComponent('Hello Lotus Shop BD! I have an inquiry about a product.')}`}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg shadow-xs transition-colors"
               >
-                <span>সরাসরি হোয়াটসঅ্যাপ মেসেজ</span>
+                <span>Chat on WhatsApp</span>
                 <span className="material-symbols-outlined text-sm">send</span>
               </a>
             </div>
@@ -100,8 +100,8 @@ export const ContactSection: React.FC = () => {
               <span className="material-symbols-outlined text-2xl">mail</span>
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-gray-900 font-bn text-sm">ইমেইল সাপোর্ট</h4>
-              <p className="text-xs text-gray-500 font-bn mb-1.5">বিজনেস ও হোলসেল যোগাযোগের জন্য</p>
+              <h4 className="font-bold text-gray-900 text-sm">Official Email</h4>
+              <p className="text-xs text-gray-500 mb-1.5">For corporate, wholesale, and formal inquiries</p>
               <a
                 href={`mailto:${settings.email}`}
                 className="text-xs font-semibold text-gray-800 hover:text-amber-600 font-mono transition-colors block break-all"
@@ -116,14 +116,14 @@ export const ContactSection: React.FC = () => {
             <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
               <span className="material-symbols-outlined text-2xl">location_on</span>
             </div>
-            <div className="flex-1 font-bn">
-              <h4 className="font-bold text-gray-900 text-sm">প্রধান শোরুম ও কর্পোরেট অফিস</h4>
+            <div className="flex-1">
+              <h4 className="font-bold text-gray-900 text-sm">Head Office &amp; Showroom</h4>
               <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-                বাড়ি-১২, রোড-৪, ব্লক-সি, মিরপুর-১০, ঢাকা-১২১৬, বাংলাদেশ।
+                House #12, Road #4, Block-C, Mirpur 10, Dhaka-1216, Bangladesh.
               </p>
               <p className="text-[11px] text-gray-400 mt-1.5 flex items-center gap-1">
                 <span className="material-symbols-outlined text-xs text-amber-500">schedule</span>
-                <span>খোলা: প্রতিদিন সকাল ৯:০০ টা - রাত ১০:০০ টা</span>
+                <span>Open: Daily 9:00 AM – 10:00 PM (Orders 24/7 online)</span>
               </p>
             </div>
           </div>
@@ -132,40 +132,40 @@ export const ContactSection: React.FC = () => {
         {/* Right Side: Interactive Instant Contact Form */}
         <div className="lg:col-span-7 bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 shadow-lg">
           <div className="border-b border-gray-100 pb-4 mb-6">
-            <h3 className="text-lg font-bold text-gray-900 font-bn">
-              আমাদের সরাসরি মেসেজ পাঠান
+            <h3 className="text-lg font-bold text-gray-900">
+              Send Us a Message
             </h3>
-            <p className="text-xs text-gray-500 font-bn mt-0.5">
-              ফর্মটি পূরণ করুন, আমাদের প্রতিনিধি খুব শীঘ্রই আপনার নম্বরে যোগাযোগ করবেন।
+            <p className="text-xs text-gray-500 mt-0.5">
+              Fill out the form below and our customer representative will call you back promptly.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 font-bn text-sm">
+          <form onSubmit={handleSubmit} className="space-y-4 text-sm">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  আপনার নাম <span className="text-red-500">*</span>
+                  Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="যেমন: তানভীর আহমেদ"
+                  placeholder="e.g. Tanvir Ahmed"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-xs sm:text-sm bg-white"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  মোবাইল নম্বর <span className="text-red-500">*</span>
+                  Mobile Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
                   required
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="যেমন: 01712-345678"
+                  placeholder="e.g. 01712-345678"
                   className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-xs sm:text-sm bg-white font-mono"
                 />
               </div>
@@ -174,7 +174,7 @@ export const ContactSection: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  ইমেইল (ঐচ্ছিক)
+                  Email Address (Optional)
                 </label>
                 <input
                   type="email"
@@ -187,31 +187,31 @@ export const ContactSection: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  যোগাযোগের বিষয়
+                  Inquiry Topic
                 </label>
                 <select
                   value={formData.subject}
                   onChange={e => setFormData({ ...formData, subject: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-xs sm:text-sm bg-white"
                 >
-                  <option value="অর্ডার সম্পর্কিত অনুসন্ধান">অর্ডার সম্পর্কিত অনুসন্ধান</option>
-                  <option value="পণ্য ও সাইজ যাচাই">পণ্য ও সাইজ যাচাই</option>
-                  <option value="ডেলিভারি স্ট্যাটাস">ডেলিভারি স্ট্যাটাস</option>
-                  <option value="পাইকারি / হোলসেল অর্ডার">পাইকারি / হোলসেল অর্ডার</option>
-                  <option value="অভিযোগ বা পরামর্শ">অভিযোগ বা পরামর্শ</option>
+                  <option value="Order Inquiry">Order Inquiry</option>
+                  <option value="Product & Sizing Help">Product &amp; Sizing Help</option>
+                  <option value="Delivery Tracking Status">Delivery Tracking Status</option>
+                  <option value="Wholesale / Bulk Orders">Wholesale / Bulk Orders</option>
+                  <option value="Feedback / Suggestions">Feedback / Suggestions</option>
                 </select>
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">
-                আপনার বার্তা লিখুন
+                Your Message
               </label>
               <textarea
                 rows={4}
                 value={formData.message}
                 onChange={e => setFormData({ ...formData, message: e.target.value })}
-                placeholder="আপনার যে কোনো প্রশ্ন বা পণ্যের বিস্তারিত এখানে লিখুন..."
+                placeholder="Write your question, required quantity or color details here..."
                 className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-xs sm:text-sm bg-white"
               />
             </div>
@@ -219,17 +219,17 @@ export const ContactSection: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-neutral-900 font-bold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer font-bn text-sm"
+              className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-neutral-900 font-bold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer text-sm"
             >
               {isSubmitting ? (
                 <>
                   <span className="material-symbols-outlined text-lg animate-spin">progress_activity</span>
-                  <span>পাঠানো হচ্ছে...</span>
+                  <span>Sending Message...</span>
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-lg">send</span>
-                  <span>মেসেজ পাঠান</span>
+                  <span>Send Message</span>
                 </>
               )}
             </button>

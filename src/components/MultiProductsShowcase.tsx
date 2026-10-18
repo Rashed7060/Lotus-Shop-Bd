@@ -11,14 +11,14 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
   const [selectedTab, setSelectedTab] = useState<string>('all');
 
   const categories = [
-    { id: 'all', label: 'সকল পণ্য', icon: 'grid_view' },
-    { id: 'Three Piece', label: 'থ্রি পিস ও শাড়ি', icon: 'apparel' },
-    { id: "Men's Wear", label: 'মেনস ফ্যাশন', icon: 'man' },
-    { id: 'Kurti', label: 'কুর্তি ও টপস', icon: 'checkroom' },
-    { id: 'Bags', label: 'ব্যাগ ও পার্স', icon: 'shopping_bag' },
-    { id: 'Shoes', label: 'জুতা ও স্নিকার্স', icon: 'footprint' },
-    { id: 'Hijab', label: 'হিজাব কালেকশন', icon: 'styler' },
-    { id: 'Electronics', label: 'গ্যাজেট ও ওয়াচ', icon: 'watch' }
+    { id: 'all', label: 'All Categories', icon: 'grid_view' },
+    { id: 'Three Piece', label: 'Three Piece & Sarees', icon: 'apparel' },
+    { id: "Men's Wear", label: "Men's Fashion", icon: 'man' },
+    { id: 'Kurti', label: 'Kurtis & Tops', icon: 'checkroom' },
+    { id: 'Bags', label: 'Bags & Purses', icon: 'shopping_bag' },
+    { id: 'Shoes', label: 'Shoes & Sneakers', icon: 'footprint' },
+    { id: 'Hijab', label: 'Hijab Collection', icon: 'styler' },
+    { id: 'Electronics', label: 'Watches & Gadgets', icon: 'watch' }
   ];
 
   // Filter products by selected tab
@@ -49,7 +49,7 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
   const handleAddToCart = (e: React.MouseEvent, prod: Product) => {
     e.stopPropagation();
     addToCart(prod, 1, prod.sizes?.[0], prod.colors?.[0]?.name);
-    showToast(`"${prod.nameBn || prod.name}" কার্টে যোগ করা হয়েছে`, 'success');
+    showToast(`"${prod.name}" added to cart`, 'success');
   };
 
   return (
@@ -61,42 +61,42 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
           <div className="lg:col-span-5 space-y-4">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider">
               <span className="material-symbols-outlined text-sm">category</span>
-              <span>মাল্টি প্রোডাক্ট শোকেস</span>
+              <span>All-In-One Lifestyle Store</span>
             </div>
             <div>
               <h2 className="text-2xl sm:text-3xl font-black text-amber-400 tracking-wide">
                 Multi Products
               </h2>
-              <p className="font-bn text-base text-gray-300 mt-1 font-medium">
-                একটি নির্ভরযোগ্য প্ল্যাটফর্মে আপনার ও পরিবারের সব ধরনের পণ্য
+              <p className="text-base text-gray-300 mt-1 font-medium">
+                Every fashion and lifestyle essential under one trusted roof.
               </p>
             </div>
 
             {/* Checklist */}
-            <div className="grid grid-cols-2 gap-y-2 gap-x-4 font-bn text-sm text-gray-200">
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm text-gray-200">
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-amber-400 text-sm">check_circle</span>
-                <span>মহিলাদের পোশাক ও শাড়ি</span>
+                <span>Women's Lawn &amp; Silk</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-amber-400 text-sm">check_circle</span>
-                <span>পুরুষদের প্রিমিয়াম পাঞ্জাবি</span>
+                <span>Men's Cotton Panjabi</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-amber-400 text-sm">check_circle</span>
-                <span>ব্র্যান্ডের স্নিকার্স ও জুতো</span>
+                <span>Athletic Sneakers &amp; Shoes</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-amber-400 text-sm">check_circle</span>
-                <span>লেদার হ্যান্ডব্যাগ ও পার্স</span>
+                <span>Quilted Leather Handbags</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-amber-400 text-sm">check_circle</span>
-                <span>স্মার্ট গ্যাজেট ও ওয়াচ</span>
+                <span>Smartwatches &amp; Gadgets</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="material-symbols-outlined text-amber-400 text-sm">check_circle</span>
-                <span>১০০% পিওর মডাল হিজাব</span>
+                <span>Pure Modal Hijab Scarves</span>
               </div>
             </div>
 
@@ -110,7 +110,7 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
                 }}
                 className="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold px-6 py-2.5 rounded-lg shadow-md text-xs uppercase tracking-wider transition-colors cursor-pointer"
               >
-                <span>সব পণ্য এক্সপ্লোর করুন</span>
+                <span>Explore Full Catalog</span>
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </button>
             </div>
@@ -123,7 +123,7 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
                 key={item.id}
                 onClick={() => handleProductClick(item)}
                 className="w-24 sm:w-28 h-32 rounded-xl bg-neutral-800/80 p-1 border border-neutral-700/80 overflow-hidden shadow-lg cursor-pointer group hover:border-amber-400 transition-all hover:scale-105"
-                title={item.nameBn}
+                title={item.name}
               >
                 <img
                   src={item.thumbnail || item.images[0]}
@@ -144,7 +144,7 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
             <button
               key={cat.id}
               onClick={() => setSelectedTab(cat.id)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bn font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
                   ? 'bg-amber-500 text-neutral-950 shadow-md font-bold'
                   : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-400 hover:text-amber-600 shadow-2xs'
@@ -182,12 +182,12 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
 
                 {/* Badge */}
                 <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
-                  <span className="inline-block bg-neutral-900/80 text-white font-bold text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md shadow-md font-bn backdrop-blur-xs">
+                  <span className="inline-block bg-neutral-900/80 text-white font-bold text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md shadow-md backdrop-blur-xs">
                     {product.category}
                   </span>
                   {discountPercent > 0 && (
-                    <span className="inline-block bg-red-600 text-white font-bold text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md shadow-md font-bn">
-                      {discountPercent}% ছাড়
+                    <span className="inline-block bg-red-600 text-white font-bold text-[10px] sm:text-[11px] px-2 py-0.5 rounded-md shadow-md">
+                      {discountPercent}% OFF
                     </span>
                   )}
                 </div>
@@ -203,7 +203,7 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
                       ? 'bg-red-50 text-red-500 border border-red-200'
                       : 'bg-white/90 hover:bg-white text-gray-500 hover:text-red-500'
                   }`}
-                  title={isInWishlist ? 'পছন্দের তালিকা থেকে সরান' : 'পছন্দের তালিকায় রাখুন'}
+                  title={isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
                 >
                   <span className={`material-symbols-outlined text-sm ${isInWishlist ? 'material-symbols-fill text-red-500' : ''}`}>
                     favorite
@@ -220,10 +220,10 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
                   </div>
 
                   <h3 className="font-bold text-gray-900 text-sm sm:text-base line-clamp-1 group-hover:text-amber-600 transition-colors">
-                    {product.nameBn || product.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 line-clamp-1 font-bn mt-0.5">
                     {product.name}
+                  </h3>
+                  <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                    {product.category} • Fast Delivery
                   </p>
                 </div>
 
@@ -231,11 +231,11 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
                 <div className="mt-3 pt-2.5 border-t border-gray-100">
                   <div className="flex items-baseline gap-2">
                     <span className="text-base sm:text-lg font-extrabold text-gray-900 font-data-tabular">
-                      ৳{product.price.toLocaleString('bn-BD')}
+                      ৳{product.price.toLocaleString('en-US')}
                     </span>
                     {product.regularPrice > product.price && (
                       <span className="text-xs text-gray-400 line-through font-data-tabular">
-                        ৳{product.regularPrice.toLocaleString('bn-BD')}
+                        ৳{product.regularPrice.toLocaleString('en-US')}
                       </span>
                     )}
                   </div>
@@ -243,16 +243,16 @@ export const MultiProductsShowcase: React.FC<MultiProductsShowcaseProps> = ({ on
                   <div className="mt-3 grid grid-cols-2 gap-1.5 sm:gap-2">
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
-                      className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bn text-xs font-semibold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                      className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                      <span className="hidden xs:inline">কার্ট</span>
+                      <span>Cart</span>
                     </button>
                     <button
                       onClick={(e) => handleDirectBuy(e, product)}
-                      className="bg-amber-500 hover:bg-amber-600 text-neutral-900 font-bn text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 shadow-xs transition-colors cursor-pointer"
+                      className="bg-amber-500 hover:bg-amber-600 text-neutral-900 text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 shadow-xs transition-colors cursor-pointer"
                     >
-                      <span>অর্ডার</span>
+                      <span>Buy Now</span>
                       <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </button>
                   </div>

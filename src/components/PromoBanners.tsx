@@ -17,13 +17,13 @@ export const PromoBanners: React.FC = () => {
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#e77a1e] to-[#f59e0b] text-white p-5 flex items-center justify-between min-h-[160px] shadow-sm">
           <div className="relative z-10 max-w-[55%]">
             <span className="text-xs uppercase font-bold tracking-wider text-orange-950/80">Big Discount</span>
-            <h3 className="font-bn text-xl font-bold mt-0.5">বিশেষ ছাড়</h3>
+            <h3 className="text-xl font-bold mt-0.5">Festive Silk Saree</h3>
             <p className="text-xs font-semibold tracking-wide uppercase text-amber-100 my-1">UP TO 50% OFF</p>
             <button
               onClick={() => handleShop('prod-8')}
-              className="inline-flex items-center space-x-1.5 font-bn text-xs bg-black/80 hover:bg-black text-white px-3 py-1.5 rounded transition-colors mt-1 font-medium cursor-pointer"
+              className="inline-flex items-center space-x-1.5 text-xs bg-black/80 hover:bg-black text-white px-3 py-1.5 rounded transition-colors mt-1 font-medium cursor-pointer"
             >
-              <span>কেনাকাটা করুন</span>
+              <span>Shop Collection</span>
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
@@ -40,13 +40,13 @@ export const PromoBanners: React.FC = () => {
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#e2e8f0] to-[#cbd5e1] text-gray-900 p-5 flex items-center justify-between min-h-[160px] shadow-sm">
           <div className="relative z-10 max-w-[55%]">
             <span className="text-xs uppercase font-bold tracking-wider text-gray-600">Electronics</span>
-            <h3 className="font-bn text-xl font-bold mt-0.5 text-gray-900">স্মার্ট লাইফের জন্য</h3>
+            <h3 className="text-xl font-bold mt-0.5 text-gray-900">Smart Living Gadgets</h3>
             <p className="text-xs font-semibold tracking-wide uppercase text-gray-700 my-1">UP TO 40% OFF</p>
             <button
               onClick={() => handleShop('prod-6')}
-              className="inline-flex items-center space-x-1.5 font-bn text-xs bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded transition-colors mt-1 font-medium cursor-pointer"
+              className="inline-flex items-center space-x-1.5 text-xs bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded transition-colors mt-1 font-medium cursor-pointer"
             >
-              <span>কেনাকাটা করুন</span>
+              <span>Explore Tech</span>
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
@@ -62,14 +62,14 @@ export const PromoBanners: React.FC = () => {
         {/* Promo Banner 3: Beauty & Personal Care */}
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#ffd9d9] to-[#fecdd3] text-gray-900 p-5 flex items-center justify-between min-h-[160px] shadow-sm">
           <div className="relative z-10 max-w-[55%]">
-            <span className="text-xs uppercase font-bold tracking-wider text-rose-800">Beauty & Personal Care</span>
-            <h3 className="font-bn text-xl font-bold mt-0.5 text-rose-950">নিজেকে আরও সুন্দর করুন</h3>
+            <span className="text-xs uppercase font-bold tracking-wider text-rose-800">Women's Fashion</span>
+            <h3 className="text-xl font-bold mt-0.5 text-rose-950">Luxury Lawn Suits</h3>
             <p className="text-xs font-semibold tracking-wide uppercase text-rose-700 my-1">UP TO 35% OFF</p>
             <button
               onClick={() => handleShop('prod-1')}
-              className="inline-flex items-center space-x-1.5 font-bn text-xs bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded transition-colors mt-1 font-medium cursor-pointer"
+              className="inline-flex items-center space-x-1.5 text-xs bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded transition-colors mt-1 font-medium cursor-pointer"
             >
-              <span>কেনাকাটা করুন</span>
+              <span>Shop Style</span>
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>

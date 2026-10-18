@@ -329,7 +329,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setActiveTab('dashboard')}
               className="flex items-center text-left cursor-pointer hover:opacity-90 transition-opacity"
             >
-              <Logo variant="horizontal" size="sm" inverted={true} />
+              <Logo size="sm" inverted={true} />
             </button>
             <div className="hidden sm:block pl-2 border-l border-gray-800">
               <span className="text-[10px] bg-rose-950/80 text-rose-300 border border-rose-800/60 font-bold px-2 py-0.5 rounded uppercase tracking-wider">

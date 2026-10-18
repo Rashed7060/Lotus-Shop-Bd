@@ -21,7 +21,7 @@ export const HeroBanner: React.FC<{ onSelectCategory?: (cat: string) => void }> 
     { name: "Men's Wear", icon: 'man', badge: '' },
     { name: "Women's Wear", icon: 'woman', badge: '' },
     { name: 'New Collection', icon: 'explore', badge: '' },
-    { name: 'Sale', icon: 'percent', badge: 'হট ছাড়', isSale: true }
+    { name: 'Sale', icon: 'percent', badge: 'HOT SALE', isSale: true }
   ];
 
   const handleShopNow = () => {
@@ -105,8 +105,8 @@ export const HeroBanner: React.FC<{ onSelectCategory?: (cat: string) => void }> 
               <p className="text-amber-600 font-serif-title italic font-medium text-2xl -mt-1 mb-2">
                 For Everyone
               </p>
-              <p className="font-bn text-xs sm:text-sm text-gray-700 mb-5 font-medium">
-                এক ছাদের নিচে সবকিছু | স্টাইল, কমফোর্ট, কোয়ালিটি
+              <p className="text-xs sm:text-sm text-gray-700 mb-5 font-medium">
+                Everything Under One Roof | Style, Comfort &amp; Quality
               </p>
               <button
                 onClick={handleShopNow}

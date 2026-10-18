@@ -51,7 +51,7 @@ export const SaleSection: React.FC = () => {
   const handleAddToCart = (e: React.MouseEvent, prod: Product) => {
     e.stopPropagation();
     addToCart(prod, 1, prod.sizes?.[0], prod.colors?.[0]?.name);
-    showToast(`"${prod.nameBn || prod.name}" কার্টে যোগ করা হয়েছে`, 'success');
+    showToast(`"${prod.name}" added to cart`, 'success');
   };
 
   return (
@@ -66,22 +66,22 @@ export const SaleSection: React.FC = () => {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-amber-200">
               <span className="material-symbols-outlined text-sm text-amber-300">bolt</span>
-              <span>ফ্ল্যাশ সেল ও স্পেশাল ডিসকাউন্ট</span>
+              <span>Flash Sale &amp; Mega Deals</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-2">
               <span>Mega Sale &amp; Offers</span>
-              <span className="text-amber-300 text-lg font-bn font-normal">/ ধামাকা ছাড়</span>
+              <span className="text-amber-300 text-lg font-normal">/ Up to 50% OFF</span>
             </h2>
-            <p className="text-rose-100 font-bn text-xs sm:text-sm">
-              সীমিত সময়ের জন্য বাছাইকৃত জনপ্রিয় পণ্যে ৫০% পর্যন্ত আকর্ষণীয় মূল্যছাড়!
+            <p className="text-rose-100 text-xs sm:text-sm">
+              Limited-time discounts on our top selected lifestyle and fashion collections!
             </p>
           </div>
 
           {/* Real-time Countdown Timer Box */}
           <div className="flex items-center gap-2 sm:gap-3 bg-black/40 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 self-start md:self-auto">
-            <div className="text-center font-bn pr-2 hidden sm:block border-r border-white/20">
-              <p className="text-[11px] text-rose-200">অফার শেষ হতে</p>
-              <p className="text-xs font-bold text-amber-300">বাকি আছে</p>
+            <div className="text-center pr-2 hidden sm:block border-r border-white/20">
+              <p className="text-[11px] text-rose-200">Deals End</p>
+              <p className="text-xs font-bold text-amber-300">In</p>
             </div>
             
             {/* Hours */}
@@ -89,7 +89,7 @@ export const SaleSection: React.FC = () => {
               <span className="w-10 h-10 sm:w-12 sm:h-12 bg-white text-gray-900 rounded-lg flex items-center justify-center font-mono font-black text-base sm:text-lg shadow-inner">
                 {String(timeLeft.hours).padStart(2, '0')}
               </span>
-              <span className="text-[10px] text-gray-200 mt-1 uppercase">ঘণ্টা</span>
+              <span className="text-[10px] text-gray-200 mt-1 uppercase">Hours</span>
             </div>
             <span className="text-xl font-bold text-amber-300 -mt-4">:</span>
 
@@ -98,7 +98,7 @@ export const SaleSection: React.FC = () => {
               <span className="w-10 h-10 sm:w-12 sm:h-12 bg-white text-gray-900 rounded-lg flex items-center justify-center font-mono font-black text-base sm:text-lg shadow-inner">
                 {String(timeLeft.minutes).padStart(2, '0')}
               </span>
-              <span className="text-[10px] text-gray-200 mt-1 uppercase">মিনিট</span>
+              <span className="text-[10px] text-gray-200 mt-1 uppercase">Mins</span>
             </div>
             <span className="text-xl font-bold text-amber-300 -mt-4">:</span>
 
@@ -107,7 +107,7 @@ export const SaleSection: React.FC = () => {
               <span className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-400 text-gray-900 rounded-lg flex items-center justify-center font-mono font-black text-base sm:text-lg shadow-inner animate-pulse">
                 {String(timeLeft.seconds).padStart(2, '0')}
               </span>
-              <span className="text-[10px] text-gray-200 mt-1 uppercase">সেকেন্ড</span>
+              <span className="text-[10px] text-gray-200 mt-1 uppercase">Secs</span>
             </div>
           </div>
         </div>
@@ -138,9 +138,9 @@ export const SaleSection: React.FC = () => {
 
                 {/* Big Sale Discount Badge */}
                 <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
-                  <span className="inline-flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full shadow-lg font-bn">
+                  <span className="inline-flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full shadow-lg">
                     <span className="material-symbols-outlined text-xs">local_offer</span>
-                    <span>{discountPercent}% ছাড়</span>
+                    <span>{discountPercent}% OFF</span>
                   </span>
                 </div>
 
@@ -155,7 +155,7 @@ export const SaleSection: React.FC = () => {
                       ? 'bg-red-50 text-red-500 border border-red-200'
                       : 'bg-white/90 hover:bg-white text-gray-500 hover:text-red-500'
                   }`}
-                  title={isInWishlist ? 'পছন্দের তালিকা থেকে সরান' : 'পছন্দের তালিকায় রাখুন'}
+                  title={isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
                 >
                   <span className={`material-symbols-outlined text-sm ${isInWishlist ? 'material-symbols-fill text-red-500' : ''}`}>
                     favorite
@@ -163,8 +163,8 @@ export const SaleSection: React.FC = () => {
                 </button>
 
                 {/* Savings Pill */}
-                <div className="absolute bottom-2 left-2 bg-neutral-900/80 backdrop-blur-xs text-amber-300 text-[10px] sm:text-xs px-2 py-0.5 rounded font-bn font-semibold">
-                  সাশ্রয়: ৳{savings.toLocaleString('bn-BD')}
+                <div className="absolute bottom-2 left-2 bg-neutral-900/80 backdrop-blur-xs text-amber-300 text-[10px] sm:text-xs px-2 py-0.5 rounded font-semibold">
+                  Save ৳{savings.toLocaleString('en-US')}
                 </div>
               </div>
 
@@ -177,21 +177,21 @@ export const SaleSection: React.FC = () => {
                   </div>
 
                   <h3 className="font-bold text-gray-900 text-sm sm:text-base line-clamp-1 group-hover:text-red-600 transition-colors">
-                    {product.nameBn || product.name}
-                  </h3>
-                  <p className="text-xs text-gray-500 line-clamp-1 font-bn mt-0.5">
                     {product.name}
+                  </h3>
+                  <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                    {product.category} • In Stock
                   </p>
                 </div>
 
                 {/* Stock Urgency Progress Indicator */}
                 <div className="mt-3">
-                  <div className="flex items-center justify-between text-[10px] text-gray-500 font-bn mb-1">
+                  <div className="flex items-center justify-between text-[10px] text-gray-500 mb-1">
                     <span className="text-red-600 font-semibold flex items-center gap-0.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-                      স্টক শেষ পর্যায়ে
+                      Selling Fast
                     </span>
-                    <span>বাকি: {product.stock || 4} টি</span>
+                    <span>Only {product.stock || 4} Left</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                     <div
@@ -205,26 +205,26 @@ export const SaleSection: React.FC = () => {
                 <div className="mt-3 pt-2.5 border-t border-gray-100">
                   <div className="flex items-baseline gap-2">
                     <span className="text-lg font-black text-red-600 font-data-tabular">
-                      ৳{product.price.toLocaleString('bn-BD')}
+                      ৳{product.price.toLocaleString('en-US')}
                     </span>
                     <span className="text-xs text-gray-400 line-through font-data-tabular">
-                      ৳{regular.toLocaleString('bn-BD')}
+                      ৳{regular.toLocaleString('en-US')}
                     </span>
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-1.5 sm:gap-2">
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
-                      className="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 font-bn text-xs font-semibold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                      className="bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-xs font-semibold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">shopping_cart</span>
-                      <span className="hidden xs:inline">কার্ট</span>
+                      <span>Cart</span>
                     </button>
                     <button
                       onClick={(e) => handleDirectBuy(e, product)}
-                      className="bg-red-600 hover:bg-red-700 text-white font-bn text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-colors cursor-pointer"
+                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-colors cursor-pointer"
                     >
-                      <span>অর্ডার করুন</span>
+                      <span>Buy Now</span>
                       <span className="material-symbols-outlined text-sm">flash_on</span>
                     </button>
                   </div>

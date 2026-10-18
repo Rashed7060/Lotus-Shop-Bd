@@ -412,11 +412,14 @@ export const AdminOrderDetailsModal: React.FC = () => {
           <div className="max-w-3xl mx-auto space-y-6 font-sans">
             {/* Invoice Header */}
             <div className="flex justify-between items-start border-b-2 border-rose-700 pb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-rose-700 tracking-tight">LOTUS SHOP BD</h1>
-                <p className="text-xs text-gray-600">হাউস #১২, রোড #০৪, ধানমন্ডি, ঢাকা - ১২০৫, বাংলাদেশ</p>
-                <p className="text-xs text-gray-600">ফোন: +8801834355700 | ইমেইল: support@lotusshopbd.com</p>
-                <p className="text-xs text-gray-600 font-mono">BIN: 002948192-0101 | TIN: 84920192841</p>
+              <div className="flex items-center gap-3">
+                <img src="/logo.svg" alt="Lotus" className="h-16 w-auto" />
+                <div>
+                  <h1 className="text-xl font-black text-gray-900 tracking-tight">LOTUS CLOTHING BRAND</h1>
+                  <p className="text-xs text-gray-600">হাউস #১২, রোড #০৪, মিরপুর-১০, ঢাকা - ১২১৬, বাংলাদেশ</p>
+                  <p className="text-xs text-gray-600">ফোন: +8801834355700 | ইমেইল: support@lotusshopbd.com</p>
+                  <p className="text-xs text-gray-600 font-mono">BIN: 002948192-0101 | TIN: 84920192841</p>
+                </div>
               </div>
               <div className="text-right">
                 <span className="text-xl font-bold bg-gray-100 px-3 py-1 rounded border border-gray-300 inline-block mb-1">

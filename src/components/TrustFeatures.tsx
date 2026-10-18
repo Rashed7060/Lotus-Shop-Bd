@@ -11,7 +11,7 @@ export const TrustFeatures: React.FC = () => {
           </div>
           <div>
             <h4 className="text-xs font-bold text-gray-900 leading-tight">100% Original</h4>
-            <p className="font-bn text-[11px] text-gray-500">অরিজিনাল পণ্য</p>
+            <p className="text-[11px] text-gray-500">Verified Quality</p>
           </div>
         </div>
 
@@ -22,18 +22,18 @@ export const TrustFeatures: React.FC = () => {
           </div>
           <div>
             <h4 className="text-xs font-bold text-gray-900 leading-tight">Fast Delivery</h4>
-            <p className="font-bn text-[11px] text-gray-500">সারা বাংলাদেশে</p>
+            <p className="text-[11px] text-gray-500">All 64 Districts</p>
           </div>
         </div>
 
         {/* Feature 3 */}
         <div className="flex items-center space-x-3 px-2 pt-2 md:pt-0">
           <div className="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0 text-gray-800">
-            <span className="material-symbols-outlined text-amber-600 text-xl">shield</span>
+            <span className="material-symbols-outlined text-amber-600 text-xl">payments</span>
           </div>
           <div>
-            <h4 className="text-xs font-bold text-gray-900 leading-tight">Secure Payment</h4>
-            <p className="font-bn text-[11px] text-gray-500">নিরাপদ পেমেন্ট</p>
+            <h4 className="text-xs font-bold text-gray-900 leading-tight">Cash on Delivery</h4>
+            <p className="text-[11px] text-gray-500">Pay at Your Door</p>
           </div>
         </div>
 
@@ -44,7 +44,7 @@ export const TrustFeatures: React.FC = () => {
           </div>
           <div>
             <h4 className="text-xs font-bold text-gray-900 leading-tight">24/7 Support</h4>
-            <p className="font-bn text-[11px] text-gray-500">সর্বদা আপনার পাশে</p>
+            <p className="text-[11px] text-gray-500">Always Here to Help</p>
           </div>
         </div>
 
@@ -54,8 +54,8 @@ export const TrustFeatures: React.FC = () => {
             <span className="material-symbols-outlined text-amber-600 text-xl">published_with_changes</span>
           </div>
           <div>
-            <h4 className="text-xs font-bold text-gray-900 leading-tight">Easy Return</h4>
-            <p className="font-bn text-[11px] text-gray-500">সহজ রিটার্ন</p>
+            <h4 className="text-xs font-bold text-gray-900 leading-tight">Easy Returns</h4>
+            <p className="text-[11px] text-gray-500">7 Days Guarantee</p>
           </div>
         </div>
       </div>
