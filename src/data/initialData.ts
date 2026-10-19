@@ -1,4 +1,4 @@
-import { Product, Order, StoreSettings, Review } from '../types';
+import { Product, Order, StoreSettings, Review, Category } from '../types';
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
@@ -465,10 +465,20 @@ export const INITIAL_SETTINGS: StoreSettings = {
   paymentNagadEnabled: true,
   paymentSslEnabled: true,
   paymentCodEnabled: true,
+  paymentBankEnabled: true,
+  bankName: 'Dutch-Bangla Bank PLC (DBBL)',
+  bankAccountName: 'LOTUS SHOP BD',
+  bankAccountNumber: '115.120.0098765',
+  bankBranchName: 'Mirpur-10 Branch, Dhaka',
+  bankRoutingNumber: '090273841',
+  bankPaymentInstructions: 'অনুগ্রহ করে উপরের ব্যাংক অ্যাকাউন্টে অর্ডার মূল্য জমা দিন বা অনলাইন ফান্ড ট্রান্সফার (BEFTN/NPSB/RTGS) করুন। এরপর ট্রানজেকশন আইডি / রেফারেন্স নম্বর নিচে প্রদান করে অর্ডার কনফার্ম করুন।',
   facebookUrl: 'https://facebook.com',
   instagramUrl: 'https://instagram.com',
   youtubeUrl: 'https://youtube.com',
-  whatsappNumber: '+8801834355700'
+  whatsappNumber: '+8801834355700',
+  logoUrl: '',
+  logoHeight: 80,
+  heroBannerUrl: ''
 };
 
 export const INITIAL_REVIEWS: Review[] = [
@@ -538,3 +548,140 @@ export const DHAKA_THANAS = [
   'Khilgaon',
   'Bashundhara R/A'
 ];
+
+export const INITIAL_CATEGORIES: Category[] = [
+  {
+    id: 'cat-1',
+    name: 'Three Piece',
+    nameBn: 'থ্রি পিস',
+    slug: 'three-piece',
+    icon: 'styler',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBgl1mxD7xqCL0ynMNHnEYB4ly1czqvWwe1H5N3DUQh5cBDXWKPuDe4wdlPKjvknMiA_1e6M_VYLDaJ_rBBK9qywF2nVMtoDXxfFI-0xvBbtu7nzGUsrtjs7ZhldAGoo4UyhtHx5HoNoFu7ISoVKtXUeUXaGW2GSQW9h8XD7Z5oai92fBhLU8bzfeNS7TnUheeFZimFZPUgyAUFZhWDmHs9Ed1ClecfnBfKFB0GbHwgudWl2NNuyulyiw',
+    description: 'প্রিমিয়াম কোয়ালিটি থ্রি পিস কালেকশন',
+    isPopular: true
+  },
+  {
+    id: 'cat-2',
+    name: 'Saree',
+    nameBn: 'শাড়ি',
+    slug: 'saree',
+    icon: 'woman',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBxUMFZmvcY_p5Ci-PIml_Bfhs3pRc9IEdin8J5lDPT7-OosOKk0HeJI4CzXmwIQHL-q_NtT4T4KHmZTYOJdhbW1u5euUsUMwGBdczNR3pHdd-1NvQUAxkEPmLopiFOhYknTRq8z1nlbZRrBdzAU-WS1u1tbsxwb8SeWHSRwx5g8sFAZw1dZMc6B9v77wk-MhrXCzelsLOj5zuz65w1c5DDPHV7mrCv9nff77p6CzXn1UTxn970tNMXyw',
+    description: 'ঐতিহ্যবাহী ও আধুনিক সিল্ক ও জামদানি শাড়ি',
+    isPopular: true
+  },
+  {
+    id: 'cat-3',
+    name: 'Kurti',
+    nameBn: 'কুর্তি',
+    slug: 'kurti',
+    icon: 'apparel',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA7wruyNf5oPKZNBsyD2im6mOOe3YFEJA5VZz_Bb1LJdE4An0FDCTk4GDh4WOV9zycwxu_Z6IiRgaUBSGrWaHfUmCY_clJ7_bUHvFbkypUuaJN7LVO1aY_-a8ixMKScjfiPtRCKZPtKPqBXYAXNaIThYVGPQlU2bjjtayt7-QH3GBS41xzi3zt9y8Y9Hwx8rP6WkmJ8bnAf7q8dgflnq4mtgKRmQbY2J7wkTE2o6AE2QVh3YOtfXYzskg',
+    description: 'ট্রেন্ডি ও ক্যাজুয়াল ডিজাইনার কুর্তি',
+    isPopular: true
+  },
+  {
+    id: 'cat-4',
+    name: "Men's Wear",
+    nameBn: 'পুরুষদের পোশাক',
+    slug: 'mens-wear',
+    icon: 'man',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAHVvNf2_CmOAj53nasaS4aXy96Tj7G_n_nBIK6tazh4z2cjpd7N4GbLUuy4v37PVzNT1tFJNlSXLqXNpADYk5hYRgqp7u2q4QuyBre1haWQD10Z00GqR_8NstHjKhnSZrOz867pDzTIT8Ihddfhmsf8ixVfnVbiU0Bc9knV5NcGVRgFeqrawPyyDYH9OaueZjnr7Dw7ttVW6eJN077C0xrXmcRDLFl6QFSFjwHHDA0xB37uqyraXQi_w',
+    description: 'প্রিমিয়াম পাঞ্জাবি, শার্ট ও ফরমাল ওয়্যার',
+    isPopular: true
+  },
+  {
+    id: 'cat-5',
+    name: 'Kids Wear',
+    nameBn: 'বাচ্চাদের পোশাক',
+    slug: 'kids-wear',
+    icon: 'child_care',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD7knPnNbDULYX-WWrx9NVEQlA1rqtxOB1fW5Bvm-Fzdn7RWxzeWJKkXpYM8LpwIagupsoq0SInJeOl-ejzWT9XZMfyDhxtKQ4-GZ_WIK6Upzz4glgBHqSpL-RyUBzgsUkRSqaE6Pzl16dy7IvlZDcYGDpEvX2fO4PU8CBLjHm8D16C8G9t5NWF3D_TqLz7f2jI6_C75yg1tesY_zGOh2I9Vt-IAwqyW--zVfPT9G5hfqlRuU6NkuQz-w',
+    description: 'আরামদায়ক ও আকর্ষণীয় কিডস কালেকশন'
+  },
+  {
+    id: 'cat-6',
+    name: 'T-Shirt',
+    nameBn: 'টি-শার্ট',
+    slug: 't-shirt',
+    icon: 'dry_cleaning',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD_Dx4KnfNwolc1jFkTg3KqOLaPFHQSsURrNMhIEtGude4L1A-U3Gm7kByzVGuT_Loggup3dWoUPwZ11atJtY-Sa3cMeEydi9PZIJOp1PFCMiDgCylRUKp7nPATs-coNroooxBce0W9ZZBgUy1cCB7ssJAmovL7ErXIvLjkFmuTRLrhIIjI_UDc1wiJGLegWUzkjN2ATiKSuCZ0PUlB5S75J49GvzieCNtH5vzbFZsYOgSIYFHrH3JYXQ',
+    description: '১০০% কম্বড কটন ক্যাজুয়াল টি-শার্ট'
+  },
+  {
+    id: 'cat-7',
+    name: 'Pants',
+    nameBn: 'প্যান্ট ও ট্রাউজার',
+    slug: 'pants',
+    icon: 'straighten',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDrZyRuQW56gx6SObu82JSclOKgv84Tj6YL6-3pLqTn4dgXu41KV2ZPYBU6xSZ2M9CJiuJwzZLcHvLVgnK3PdwdH5BzOZymPR-yHFya2XImx6kWDxx_-eIW5Z51ikMEfLC5aCwouJnf_2-2nuau01DoFISkXatjfajRzK36cwuYhdIic5VjS_RGCa6_oYcWI8DazyrsOf2bbqgpNv4OcUH7fWraFj6mQewQ_xv-PqHyJx2TRAwCP93NJg',
+    description: 'জিন্স, চিনোস ও ক্যাজুয়াল ট্রাউজার্স'
+  },
+  {
+    id: 'cat-8',
+    name: 'Hijab',
+    nameBn: 'হিজাব ও বোরকা',
+    slug: 'hijab',
+    icon: 'female',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC6wwDrE_y3BP5tQPvMnmCXp43LZjoF8m6KTK-WoFcUo1T5t1ShubVL0yn9-rTc_7q3JR9GiUN1t66mhAlWwxDpHideZQD7M441BEfGYhqPNPQgClZgE6rLW53ZYkVPkm2_GR7GbjVkFgzfRBvHF_b1itTjsqzp_FD2B8vwPnAv2I91PDYWo5pbpqW3hVPbw2npNPiUxxEx-1wdMhTuyjlUappNLmyb3ze7JEsA5SNhdGU6LnTgTabZgw',
+    description: 'প্রিমিয়াম জর্জেট ও শিফন হিজাব ও ওড়না',
+    isPopular: true
+  },
+  {
+    id: 'cat-9',
+    name: 'Shoes',
+    nameBn: 'জুতো ও জুতা',
+    slug: 'shoes',
+    icon: 'steps',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAMVQCvL6vhVKdBAiHnhj5Hlan-Tv9p7RBQI_dvBTcUFFs_UP8As4TsfneqVyS-zKRCZ5fAtNJPhjGcc0NKBfn_WeEipTVRbVlBjK-Mcu19hgcdxS-oMzwB1m-8JiU4puJ9wMUXMbPXv77wb_Cm3avWR3JMRM5joOQWXOxIEWY-EtE2ULMFZmOV01msZrkYfb4LWvoqiAvPsygCmhxghq5lLtgCdbc99Wh5DN0U8zNDR3i3hDeS_4pUZw',
+    description: 'স্নিকার্স, লোফার্স ও ক্যাজুয়াল ফুটওয়্যার',
+    isPopular: true
+  },
+  {
+    id: 'cat-10',
+    name: 'Bags',
+    nameBn: 'ব্যাগ ও পার্স',
+    slug: 'bags',
+    icon: 'shopping_bag',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC-pkZ34lfLrZ0-UGT2wjkU-JC6SecQYpRMX-lzKfK8CeXOE6SiEHfkuZyVeKrfR1KR_HQ22Ax8N_IT1cBzQ4l0AuspcJv2BnnxIotBKGmAwG-lcE0C480Czjo3XMnW3PQPzKEdNWgLcHXajyd8rr88E5jEh3qgl1f7QssjnXUQLJdjeqJ9nbIB9jCCXg5_7ZV5AkDV8XS1gXurmsy9aT9chPClelhbZG94rBUT1C61SKkr8fU33zaHeg',
+    description: 'লেডিস হ্যান্ডব্যাগ, ক্লাচ ও টোট ব্যাগ',
+    isPopular: true
+  },
+  {
+    id: 'cat-11',
+    name: 'Beauty & Makeup',
+    nameBn: 'সৌন্দর্য ও প্রসাধন',
+    slug: 'beauty-makeup',
+    icon: 'brush',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBRtrBSWpU4kv2GcXpmaYlB9yfJoJo4YRHwtrj6fFtoWLU8TDqyLsUXn9mz2RZhy0aslz9CbytJsbJQwv9pxSH_ppKh2GDVb0FjNKeqdXR-vYYiElc_HgEiE2X9viTMnxu8Scdb7nqiRP2kv2ZpsM94SS29BO2Pl1CAN1Lzwq9nYrkCKCXVlXy7RAayd2SDJcaQde6iJoxKpmvofJt06wTSUDhKgChz0gtMQTTJgvxbHd-QeCOZT9kdOg',
+    description: 'অরজিনাল স্কিনকেয়ার ও কসমেটিকস'
+  },
+  {
+    id: 'cat-12',
+    name: 'Electronics',
+    nameBn: 'ইলেকট্রনিক্স ও গ্যাজেট',
+    slug: 'electronics',
+    icon: 'devices',
+    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCQwWovyKvkKiWd6JFv7pVBoAcupl5aBrsQobcwc24vjrZCojC_aDRF10ziLIDaqwENXkMQUYWoobFVS-vnVsqCNhCrxsSPWnddkMlF8xhxLDUNO8tnocbJrnc9jNAE2Sin-mNgBRZl6I2IQ9w8gU_dHmvvrcC9D9Skf_e0EbcMp1vpSPhNefuoDtwPSjxu5vD72QBBbfD8e4qYKCj5bm5Ik-wk8uQQKhIVg158EzBWb334_Cfa8fqYWQ',
+    description: 'স্মার্ট ওয়াচ, ইয়ারবাডস ও লাইফস্টাইল গ্যাজেট'
+  },
+  {
+    id: 'cat-13',
+    name: 'Jewelry & Accessories',
+    nameBn: 'গহনা ও অলঙ্কার',
+    slug: 'jewelry-accessories',
+    icon: 'diamond',
+    image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80',
+    description: 'এক্সক্লুসিভ গহনা ও ফ্যাশন এক্সেসরিজ'
+  },
+  {
+    id: 'cat-14',
+    name: 'Women Fashion',
+    nameBn: 'নারীদের ফ্যাশন',
+    slug: 'women-fashion',
+    icon: 'female',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+    description: 'লেটেস্ট ট্রেন্ডি নারীদের পোশাক'
+  }
+];
+

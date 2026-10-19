@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useStore } from '../context/StoreContext';
-import { Product, Order, OrderStatus, CourierProvider } from '../types';
+import { Product, Order, OrderStatus, CourierProvider, Category } from '../types';
 import { AdminProductEditModal } from './AdminProductEditModal';
 import { Logo } from './Logo';
 
@@ -35,15 +35,19 @@ export const AdminDashboard: React.FC = () => {
     showToast,
     setIsHostingerGuideOpen,
     adminTab,
-    setAdminTab
+    setAdminTab,
+    categories,
+    addCategory,
+    updateCategory,
+    deleteCategory
   } = useStore();
 
   // 5 MAIN REQUESTED TABS: Dashboard, Product, Orders, Customer, Settings (Synchronized globally)
   const activeTab = adminTab;
   const setActiveTab = setAdminTab;
   
-  // Settings sub-tab
-  const [settingsSubTab, setSettingsSubTab] = useState<'branding' | 'shipping' | 'courier' | 'payment'>('branding');
+  // Settings sub-tab (Defaults to Appearance Settings)
+  const [settingsSubTab, setSettingsSubTab] = useState<'appearance' | 'branding' | 'shipping' | 'courier' | 'payment'>('appearance');
 
   // Orders filters
   const [orderFilter, setOrderFilter] = useState<string>('all');
@@ -54,6 +58,67 @@ export const AdminDashboard: React.FC = () => {
   const [selectedProductForEdit, setSelectedProductForEdit] = useState<Product | null>(null);
   const [isProductEditModalOpen, setIsProductEditModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+
+  // Category Manager State
+  const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState('');
+  const [newCatName, setNewCatName] = useState('');
+  const [newCatNameBn, setNewCatNameBn] = useState('');
+  const [newCatIcon, setNewCatIcon] = useState('category');
+  const [newCatImage, setNewCatImage] = useState('');
+  const [newCatDescription, setNewCatDescription] = useState('');
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+
+  const handleSaveCategory = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!newCatName.trim()) {
+      showToast('ক্যাটেগরির নাম প্রদান করুন', 'error');
+      return;
+    }
+    if (editingCategory) {
+      updateCategory(editingCategory.id, {
+        name: newCatName.trim(),
+        nameBn: newCatNameBn.trim() || newCatName.trim(),
+        icon: newCatIcon || 'category',
+        image: newCatImage.trim(),
+        description: newCatDescription.trim()
+      });
+      setEditingCategory(null);
+      showToast(`"${newCatName.trim()}" ক্যাটেগরি আপডেট হয়েছে!`);
+    } else {
+      addCategory({
+        name: newCatName.trim(),
+        nameBn: newCatNameBn.trim() || newCatName.trim(),
+        icon: newCatIcon || 'category',
+        image: newCatImage.trim(),
+        description: newCatDescription.trim()
+      });
+    }
+    setNewCatName('');
+    setNewCatNameBn('');
+    setNewCatIcon('category');
+    setNewCatImage('');
+    setNewCatDescription('');
+  };
+
+  const startEditCategory = (cat: Category) => {
+    setEditingCategory(cat);
+    setNewCatName(cat.name);
+    setNewCatNameBn(cat.nameBn || '');
+    setNewCatIcon(cat.icon || 'category');
+    setNewCatImage(cat.image || '');
+    setNewCatDescription(cat.description || '');
+  };
+
+  const cancelEditCategory = () => {
+    setEditingCategory(null);
+    setNewCatName('');
+    setNewCatNameBn('');
+    setNewCatIcon('category');
+    setNewCatImage('');
+    setNewCatDescription('');
+  };
 
   // Customer state & filters
   const [customerSearch, setCustomerSearch] = useState('');
@@ -73,7 +138,155 @@ export const AdminDashboard: React.FC = () => {
   const [outsideDhakaFee, setOutsideDhakaFee] = useState(settings.shippingOutsideDhaka);
   const [freeShippingMin, setFreeShippingMin] = useState(settings.freeShippingThreshold);
 
-  // New Customer Form State
+  // Appearance & Logo management state
+  const [customLogoInputUrl, setCustomLogoInputUrl] = useState('');
+  const [isDraggingLogo, setIsDraggingLogo] = useState(false);
+  const logoFileInputRef = useRef<HTMLInputElement>(null);
+
+  const processLogoFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      showToast('অনুগ্রহ করে শুধুমাত্র ইমেজ (JPG, PNG, WebP, SVG) ফাইল আপলোড করুন', 'error');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('ফাইলের সাইজ ৫ মেগাবাইট (5MB)-এর কম হতে হবে', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        updateSettings({ logoUrl: result });
+        showToast('লোগো সফলভাবে আপলোড ও আপডেট করা হয়েছে! ওয়েবসাইটের সর্বত্র লোগো src পরিবর্তিত হয়েছে।', 'success');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleLogoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    processLogoFile(file);
+  };
+
+  const handleLogoDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingLogo(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processLogoFile(file);
+    }
+  };
+
+  const handleApplyLogoUrl = () => {
+    if (!customLogoInputUrl.trim()) {
+      showToast('অনুগ্রহ করে একটি বৈধ ইমেজ URL দিন', 'error');
+      return;
+    }
+    updateSettings({ logoUrl: customLogoInputUrl.trim() });
+    setCustomLogoInputUrl('');
+    showToast('লোগো URL সফলভাবে সেট করা হয়েছে! ওয়েবসাইটের সর্বত্র লোগো src পরিবর্তিত হয়েছে।', 'success');
+  };
+
+  const handleDeleteLogo = () => {
+    updateSettings({ logoUrl: '' });
+    if (logoFileInputRef.current) {
+      logoFileInputRef.current.value = '';
+    }
+    showToast('কাস্টম লোগো মুছে ফেলা হয়েছে এবং মূল লোগো (/logo.svg) রিস্টোর করা হয়েছে!', 'info');
+  };
+
+  const handleSetLogoHeight = (height: number) => {
+    updateSettings({ logoHeight: height });
+    showToast(`লোগো উচ্চতা ${height}px নির্ধারণ করা হয়েছে`, 'success');
+  };
+
+  // Bank Payment Gateway settings state
+  const [paymentBankEnabled, setPaymentBankEnabled] = useState(settings.paymentBankEnabled ?? true);
+  const [bankName, setBankName] = useState(settings.bankName || 'Dutch-Bangla Bank PLC (DBBL)');
+  const [bankAccountName, setBankAccountName] = useState(settings.bankAccountName || 'LOTUS SHOP BD');
+  const [bankAccountNumber, setBankAccountNumber] = useState(settings.bankAccountNumber || '115.120.0098765');
+  const [bankBranchName, setBankBranchName] = useState(settings.bankBranchName || 'Mirpur-10 Branch, Dhaka');
+  const [bankRoutingNumber, setBankRoutingNumber] = useState(settings.bankRoutingNumber || '090273841');
+  const [bankPaymentInstructions, setBankPaymentInstructions] = useState(
+    settings.bankPaymentInstructions ||
+      'অনুগ্রহ করে উপরের ব্যাংক অ্যাকাউন্টে অর্ডার মূল্য জমা দিন বা অনলাইন ফান্ড ট্রান্সফার (BEFTN/NPSB/RTGS) করুন। এরপর ট্রানজেকশন আইডি / রেফারেন্স নম্বর নিচে প্রদান করে অর্ডার কনফার্ম করুন।'
+  );
+
+  const handleSaveBankSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateSettings({
+      paymentBankEnabled,
+      bankName,
+      bankAccountName,
+      bankAccountNumber,
+      bankBranchName,
+      bankRoutingNumber,
+      bankPaymentInstructions
+    });
+    showToast('ব্যাংক পেমেন্ট গেটওয়ে সেটিংস সফলভাবে সংরক্ষিত হয়েছে!', 'success');
+  };
+
+  // Home Hero Banner Management state & handlers
+  const [customBannerInputUrl, setCustomBannerInputUrl] = useState('');
+  const [isDraggingBanner, setIsDraggingBanner] = useState(false);
+  const bannerFileInputRef = useRef<HTMLInputElement>(null);
+
+  const processBannerFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      showToast('অনুগ্রহ করে শুধুমাত্র ইমেজ (JPG, PNG, WebP) ফাইল আপলোড করুন', 'error');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      showToast('ফাইলের সাইজ ৮ মেগাবাইট (8MB)-এর কম হতে হবে', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        updateSettings({ heroBannerUrl: result });
+        showToast('হোম স্ক্রিন হিরো ব্যানার সফলভাবে আপডেট করা হয়েছে!', 'success');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleBannerFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    processBannerFile(file);
+  };
+
+  const handleBannerDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingBanner(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processBannerFile(file);
+    }
+  };
+
+  const handleApplyBannerUrl = () => {
+    if (!customBannerInputUrl.trim()) {
+      showToast('অনুগ্রহ করে একটি বৈধ ইমেজ URL দিন', 'error');
+      return;
+    }
+    updateSettings({ heroBannerUrl: customBannerInputUrl.trim() });
+    setCustomBannerInputUrl('');
+    showToast('হোম ব্যানার URL সফলভাবে সেট করা হয়েছে!', 'success');
+  };
+
+  const handleDeleteBanner = () => {
+    updateSettings({ heroBannerUrl: '' });
+    if (bannerFileInputRef.current) {
+      bannerFileInputRef.current.value = '';
+    }
+    showToast('কাস্টম ব্যানার মুছে ফেলা হয়েছে এবং মূল ব্যানার রিস্টোর করা হয়েছে!', 'info');
+  };
+
   const [newCustName, setNewCustName] = useState('');
   const [newCustPhone, setNewCustPhone] = useState('');
   const [newCustEmail, setNewCustEmail] = useState('');
@@ -345,6 +558,19 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Right Action buttons & Profile */}
           <div className="flex items-center gap-3">
+            {/* Appearance Settings Quick Shortcut */}
+            <button
+              onClick={() => {
+                setActiveTab('settings');
+                setSettingsSubTab('appearance');
+              }}
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-amber-950/70 hover:bg-amber-900 text-amber-200 border border-amber-700/60 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              title="লোগো ও অ্যাপিয়ারেন্স পরিবর্তন করুন"
+            >
+              <span className="material-symbols-outlined text-sm text-amber-400">palette</span>
+              <span>লোগো ও অ্যাপিয়ারেন্স</span>
+            </button>
+
             {/* Hostinger Guide Button */}
             <button
               onClick={() => setIsHostingerGuideOpen(true)}
@@ -777,15 +1003,17 @@ export const AdminDashboard: React.FC = () => {
                 <select
                   value={productCategoryFilter}
                   onChange={(e) => setProductCategoryFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-xl text-xs font-medium bg-white focus:outline-none focus:ring-1 focus:ring-rose-500"
+                  className="px-3 py-2 border border-gray-300 rounded-xl text-xs font-medium bg-white focus:outline-none focus:ring-1 focus:ring-rose-500 max-w-[190px] truncate"
                 >
-                  <option value="all">সকল ক্যাটেগরি</option>
-                  <option value="Women Fashion">Women Fashion</option>
-                  <option value="Men Fashion">Men Fashion</option>
-                  <option value="Saree & Three Piece">Saree & Three Piece</option>
-                  <option value="Beauty & Makeup">Beauty & Makeup</option>
-                  <option value="Jewelry & Accessories">Jewelry & Accessories</option>
-                  <option value="Footwear">Footwear</option>
+                  <option value="all">সকল ক্যাটেগরি ({products.length})</option>
+                  {categories.map((c) => {
+                    const count = products.filter(p => p.category?.toLowerCase() === c.name.toLowerCase()).length;
+                    return (
+                      <option key={c.id || c.name} value={c.name}>
+                        {c.name} {c.nameBn && c.nameBn !== c.name ? `(${c.nameBn})` : ''} ({count})
+                      </option>
+                    );
+                  })}
                 </select>
 
                 {/* Search Bar */}
@@ -798,7 +1026,7 @@ export const AdminDashboard: React.FC = () => {
                     value={productSearch}
                     onChange={(e) => setProductSearch(e.target.value)}
                     placeholder="পণ্য বা SKU সার্চ..."
-                    className="pl-9 pr-7 py-2 border border-gray-300 rounded-xl text-xs w-48 sm:w-56 focus:outline-none focus:ring-1 focus:ring-rose-500 bg-white"
+                    className="pl-9 pr-7 py-2 border border-gray-300 rounded-xl text-xs w-44 sm:w-52 focus:outline-none focus:ring-1 focus:ring-rose-500 bg-white"
                   />
                   {productSearch && (
                     <button
@@ -809,6 +1037,16 @@ export const AdminDashboard: React.FC = () => {
                     </button>
                   )}
                 </div>
+
+                {/* Category Management Button */}
+                <button
+                  onClick={() => setIsCategoryManagerOpen(true)}
+                  className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer hover:border-rose-300"
+                  title="ক্যাটেগরি যোগ, সম্পাদনা ও ম্যানেজমেন্ট"
+                >
+                  <span className="material-symbols-outlined text-base text-rose-600">category</span>
+                  <span>ক্যাটেগরি সমূহ ({categories.length})</span>
+                </button>
 
                 {/* Primary Add Product Button */}
                 <button
@@ -1291,6 +1529,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
               <div className="flex border-b border-gray-200 bg-gray-50 overflow-x-auto">
                 {[
+                  { id: 'appearance', label: 'Appearance Settings (লোগো ও অ্যাপিয়ারেন্স)', icon: 'palette' },
                   { id: 'branding', label: 'সাধারণ ব্র্যান্ডিং ও যোগাযোগ', icon: 'storefront' },
                   { id: 'shipping', label: 'ডেলিভারি চার্জ নির্ধারণ', icon: 'local_shipping' },
                   { id: 'courier', label: 'কুরিয়ার API (Steadfast/Pathao/RedX)', icon: 'local_post_office' },
@@ -1312,9 +1551,457 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="p-6">
+                {/* Sub Tab: Appearance Settings */}
+                {settingsSubTab === 'appearance' && (
+                  <div className="space-y-6 max-w-4xl">
+                    {/* Appearance Settings Header Card */}
+                    <div className="bg-gradient-to-br from-amber-50/80 via-white to-rose-50/50 p-6 rounded-2xl border border-amber-200/90 shadow-xs">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-amber-100">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-amber-600 text-2xl">palette</span>
+                            <h3 className="font-extrabold text-gray-900 text-lg">Appearance Settings</h3>
+                            <span className="px-2 py-0.5 bg-rose-100 text-rose-800 text-[10px] font-bold rounded-full uppercase tracking-wider">Site Logo & Branding</span>
+                          </div>
+                          <p className="text-xs text-gray-600 mt-1">
+                            ওয়েবসাইটের লোগো আপলোড, পরিবর্তন (Replace) বা ডিলিট করুন। নতুন লোগো আপলোড করলে সমগ্র ওয়েবসাইটের (Header, Footer, Mobile, Invoice) লোগো <code className="bg-amber-100 text-amber-900 px-1 py-0.5 rounded font-mono text-[11px]">src</code> অ্যাট্রিবিউট রিয়েল-টাইমে গ্লোবালি আপডেট হয়ে যাবে।
+                          </p>
+                        </div>
+
+                        <div className="shrink-0">
+                          {settings.logoUrl ? (
+                            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-xs border border-emerald-300 shadow-2xs">
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                              <span>কাস্টম লোগো সক্রিয় (Custom Logo Active)</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-amber-100 text-amber-800 rounded-full font-bold text-xs border border-amber-300 shadow-2xs">
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-600"></span>
+                              <span>ডিফল্ট অফিসিয়াল লোগো সক্রিয় (/logo.svg)</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Live Global Source Inspector Banner */}
+                      <div className="mt-4 p-3 bg-white/90 rounded-xl border border-amber-200/70 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <span className="material-symbols-outlined text-gray-500 text-base shrink-0">code</span>
+                          <span className="font-bold text-gray-700 shrink-0">Global Image Src:</span>
+                          <code className="bg-gray-100 text-rose-600 font-mono text-[11px] px-2 py-0.5 rounded border border-gray-200 truncate max-w-md">
+                            {settings.logoUrl || '/logo.svg'}
+                          </code>
+                        </div>
+                        <span className="text-[11px] text-emerald-700 font-bold shrink-0 flex items-center gap-1">
+                          <span className="material-symbols-outlined text-sm">sync</span>
+                          গ্লোবাল বাইন্ডিং সক্রিয়
+                        </span>
+                      </div>
+
+                      {/* Interactive Drag-and-Drop & Upload / Replace Zone */}
+                      <div className="mt-5">
+                        <input
+                          type="file"
+                          ref={logoFileInputRef}
+                          onChange={handleLogoFileUpload}
+                          accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml"
+                          className="hidden"
+                          id="admin-logo-upload-input"
+                        />
+
+                        <div
+                          onDragOver={(e) => { e.preventDefault(); setIsDraggingLogo(true); }}
+                          onDragLeave={() => setIsDraggingLogo(false)}
+                          onDrop={handleLogoDrop}
+                          onClick={() => logoFileInputRef.current?.click()}
+                          className={`p-6 border-2 border-dashed rounded-2xl text-center cursor-pointer transition-all duration-200 ${
+                            isDraggingLogo
+                              ? 'border-rose-500 bg-rose-50/70 scale-[1.01]'
+                              : 'border-amber-300 hover:border-amber-400 bg-white/70 hover:bg-amber-50/30'
+                          }`}
+                        >
+                          <div className="w-14 h-14 mx-auto rounded-full bg-gradient-to-tr from-amber-500 to-rose-500 text-white flex items-center justify-center shadow-md mb-3">
+                            <span className="material-symbols-outlined text-2xl">cloud_upload</span>
+                          </div>
+                          <h4 className="font-bold text-gray-900 text-sm">
+                            {settings.logoUrl ? 'নতুন লোগো দিয়ে প্রতিস্থাপন (Replace Logo) করুন' : 'ওয়েবসাইটের নতুন লোগো আপলোড করুন'}
+                          </h4>
+                          <p className="text-xs text-gray-500 mt-1">
+                            আপনার ইমেজ ফাইলটি এখানে ড্র্যাগ করে এনে ছেড়ে দিন অথবা ব্রাউজ করতে ক্লিক করুন
+                          </p>
+                          <p className="text-[11px] text-gray-400 mt-1 font-mono">
+                            সাপোর্টেড ফরম্যাট: PNG (স্বচ্ছ ব্যাকগ্রাউন্ড সবচেয়ে ভালো), SVG, JPG, WebP | সর্বোচ্চ ৫ MB
+                          </p>
+                          
+                          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-600 to-rose-600 text-white rounded-lg font-bold text-xs shadow-xs hover:shadow-md transition-all">
+                            <span className="material-symbols-outlined text-sm">folder_open</span>
+                            <span>{settings.logoUrl ? 'লোগো পরিবর্তন বা রিপ্লেস করুন' : 'ফাইল ব্রাউজ করুন'}</span>
+                          </div>
+                        </div>
+
+                        {/* URL Input & Quick Actions Bar */}
+                        <div className="mt-4 pt-4 border-t border-amber-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                          {/* Image URL Direct Input */}
+                          <div className="flex-1 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-gray-400 text-base shrink-0">link</span>
+                            <input
+                              type="url"
+                              placeholder="অথবা সরাসরি Image URL পেস্ট করুন (e.g. https://...)..."
+                              value={customLogoInputUrl}
+                              onChange={(e) => setCustomLogoInputUrl(e.target.value)}
+                              className="px-3 py-2 border border-gray-300 rounded-lg text-xs w-full focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 bg-white"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleApplyLogoUrl}
+                              className="px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-lg font-bold text-xs shrink-0 cursor-pointer transition-colors shadow-xs"
+                            >
+                              URL প্রয়োগ করুন
+                            </button>
+                          </div>
+
+                          {/* Delete / Reset Button */}
+                          {settings.logoUrl && (
+                            <button
+                              type="button"
+                              onClick={handleDeleteLogo}
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg font-bold text-xs transition-colors cursor-pointer shrink-0"
+                              title="কাস্টম লোগো মুছে ফেলে মূল অফিসিয়াল লোটাস লোগোতে রিসেট করুন"
+                            >
+                              <span className="material-symbols-outlined text-base">delete</span>
+                              <span>লোগো ডিলিট করুন (ডিফল্ট রিসেট)</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Logo Height / Sizing Controls */}
+                      <div className="mt-5 pt-4 border-t border-amber-100 bg-white/60 p-4 rounded-xl border border-gray-100">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                          <label className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-sm text-amber-600">aspect_ratio</span>
+                            <span>লোগোর ডিসপ্লে সাইজ (Logo Display Height):</span>
+                            <span className="font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 font-bold">
+                              {settings.logoHeight || 80}px
+                            </span>
+                          </label>
+                          <div className="flex items-center gap-1.5">
+                            {[
+                              { label: 'Small', h: 56 },
+                              { label: 'Standard', h: 80 },
+                              { label: 'Large', h: 104 },
+                              { label: 'XL', h: 128 }
+                            ].map((preset) => (
+                              <button
+                                key={preset.h}
+                                type="button"
+                                onClick={() => handleSetLogoHeight(preset.h)}
+                                className={`px-2.5 py-1 text-[11px] font-bold rounded cursor-pointer transition-colors ${
+                                  (settings.logoHeight || 80) === preset.h
+                                    ? 'bg-amber-600 text-white'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                }`}
+                              >
+                                {preset.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <input
+                          type="range"
+                          min="40"
+                          max="140"
+                          step="2"
+                          value={settings.logoHeight || 80}
+                          onChange={(e) => handleSetLogoHeight(Number(e.target.value))}
+                          className="w-full accent-amber-600 cursor-pointer"
+                        />
+                        <div className="flex justify-between text-[10px] text-gray-400 font-mono mt-1">
+                          <span>40px (কমপ্যাক্ট)</span>
+                          <span>80px (স্ট্যান্ডার্ড)</span>
+                          <span>140px (লার্জ)</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Live Multi-Theme & Multi-Device Previews Grid */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-rose-600 text-lg">preview</span>
+                          <span>লাইভ প্রিভিউ (Global Real-time Previews across Storefront)</span>
+                        </h4>
+                        <span className="text-[11px] text-gray-500">সমস্ত ভিউতে একই লোগো src কাজ করছে</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* 1. Light Header Navbar Preview */}
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-2xs">
+                          <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                            <span className="flex items-center gap-1">
+                              <span className="material-symbols-outlined text-xs">desktop_windows</span>
+                              হেডার ডিসপ্লে (Light Header Navbar)
+                            </span>
+                            <span className="text-gray-400 font-mono">BG: #FFFFFF</span>
+                          </div>
+                          
+                          {/* Simulated Storefront Header */}
+                          <div className="rounded-lg border border-gray-200 bg-white p-2.5 shadow-2xs">
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-2">
+                                <Logo size="md" />
+                              </div>
+                              <div className="hidden sm:flex items-center gap-2 text-[10px] text-gray-500">
+                                <span className="hover:text-rose-600 cursor-pointer">নতুন কালেকশন</span>
+                                <span className="hover:text-rose-600 cursor-pointer">থ্রি পিস</span>
+                                <span className="hover:text-rose-600 cursor-pointer">শাড়ি</span>
+                              </div>
+                              <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs">
+                                <span className="material-symbols-outlined text-xs">shopping_bag</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-[10px] text-gray-400 font-mono flex items-center justify-between">
+                            <span>Tag: &lt;img data-logo-image="site-logo"&gt;</span>
+                            <span className="text-emerald-600 font-bold">Live Synced</span>
+                          </div>
+                        </div>
+
+                        {/* 2. Dark Footer Preview */}
+                        <div className="bg-[#111111] p-4 rounded-xl border border-neutral-800 shadow-2xs text-white">
+                          <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-800 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                            <span className="flex items-center gap-1">
+                              <span className="material-symbols-outlined text-xs">dark_mode</span>
+                              ফুটার ডিসপ্লে (Dark Footer Theme)
+                            </span>
+                            <span className="text-neutral-500 font-mono">BG: #111111</span>
+                          </div>
+                          
+                          {/* Simulated Footer Area */}
+                          <div className="rounded-lg border border-neutral-800 bg-[#1c1917] p-2.5">
+                            <div className="flex items-center justify-between gap-3">
+                              <Logo size="md" inverted={true} />
+                              <div className="text-[10px] text-neutral-400 text-right">
+                                <p className="font-bold text-white">Lotus Clothing Brand</p>
+                                <p className="text-[9px] text-neutral-500">We Trust In Quality</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-[10px] text-neutral-500 font-mono flex items-center justify-between">
+                            <span>Inverted filter applied for dark background</span>
+                            <span className="text-emerald-400 font-bold">Live Synced</span>
+                          </div>
+                        </div>
+
+                        {/* 3. Mobile Device Navbar Preview */}
+                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-2xs">
+                          <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-200 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                            <span className="flex items-center gap-1">
+                              <span className="material-symbols-outlined text-xs">smartphone</span>
+                              মোবাইল ভিউ ডিসপ্লে (Mobile Top Bar)
+                            </span>
+                            <span className="text-gray-400 font-mono">Screen: ~375px</span>
+                          </div>
+
+                          <div className="max-w-xs mx-auto bg-white rounded-xl border border-gray-300 p-2 shadow-xs">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="material-symbols-outlined text-gray-700 text-lg">menu</span>
+                              <Logo size="sm" />
+                              <span className="material-symbols-outlined text-gray-700 text-lg">shopping_cart</span>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-[10px] text-gray-400 font-mono text-center">
+                            মোবাইলেও স্বয়ংক্রিয়ভাবে পারফেক্ট সাইজে ফিট হয়
+                          </div>
+                        </div>
+
+                        {/* 4. Order Invoice Preview */}
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-2xs">
+                          <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-100 text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                            <span className="flex items-center gap-1">
+                              <span className="material-symbols-outlined text-xs">receipt_long</span>
+                              ইনভয়েস ও ক্যাশ মেমো (Print Invoice Display)
+                            </span>
+                            <span className="text-gray-400 font-mono">Invoice Header</span>
+                          </div>
+
+                          <div className="p-3 bg-amber-50/20 border border-gray-200 rounded-lg">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Logo size="sm" />
+                                <div>
+                                  <p className="font-extrabold text-[11px] text-gray-900">LOTUS SHOP BD</p>
+                                  <p className="text-[9px] text-gray-500">ট্যাক্স ইনভয়েস ও ক্যাশ মেমো</p>
+                                </div>
+                              </div>
+                              <span className="text-[9px] font-mono bg-gray-100 px-2 py-0.5 rounded border border-gray-200 text-gray-600">
+                                #INV-2026-001
+                              </span>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-[10px] text-gray-400 font-mono text-center">
+                            কাস্টমার ইনভয়েস প্রিন্ট করার সময় এই লোগোই প্রিন্ট হবে
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Home Screen Hero Banner Management Card */}
+                    <div className="bg-gradient-to-br from-amber-50/80 via-white to-orange-50/50 p-6 rounded-2xl border border-amber-200/90 shadow-xs mt-6">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-amber-100">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="material-symbols-outlined text-amber-600 text-2xl">view_carousel</span>
+                            <h3 className="font-extrabold text-gray-900 text-base">হোম স্ক্রিন হিরো ব্যানার (Home Hero Banner)</h3>
+                            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                              Homepage Top Banner
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600 mt-1">
+                            হোমপেজের প্রধান হিরো ব্যানার পরিবর্তন করতে এখান থেকে আপনার ব্যানার ইমেজ (যেমন: আপনার দেওয়া স্ক্রিনশট বা ব্যানার ডিজাইন) আপলোড করুন বা ইমেজ URL প্রদান করুন।
+                          </p>
+                        </div>
+
+                        <div className="shrink-0">
+                          {settings.heroBannerUrl ? (
+                            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-100 text-emerald-800 rounded-full font-bold text-xs border border-emerald-300 shadow-2xs">
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                              <span>কাস্টম ব্যানার সক্রিয়</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-amber-100 text-amber-800 rounded-full font-bold text-xs border border-amber-300 shadow-2xs">
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-600"></span>
+                              <span>ডিফল্ট অফিসিয়াল ব্যানার সক্রিয় (Fashion &amp; Lifestyle)</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Banner Current Preview */}
+                      <div className="mt-4 p-3 bg-white rounded-xl border border-amber-200">
+                        <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center justify-between">
+                          <span>বর্তমানে হোম স্ক্রিনে সক্রিয় ব্যানার প্রিভিউ</span>
+                          <span className="text-emerald-700 font-bold text-[11px]">লাইভ প্রিভিউ</span>
+                        </div>
+                        <div className="rounded-lg overflow-hidden border border-gray-200 bg-gray-50 max-h-56 flex items-center justify-center">
+                          {settings.heroBannerUrl ? (
+                            <img
+                              src={settings.heroBannerUrl}
+                              alt="Active Home Banner"
+                              className="w-full h-auto max-h-56 object-cover object-center"
+                            />
+                          ) : (
+                            <div className="p-6 text-center text-xs text-gray-600 space-y-1">
+                              <p className="font-bold text-gray-800">অফিসিয়াল লোটাস ফ্যাশন &amp; লাইফস্টাইল ব্যানার সক্রিয়</p>
+                              <p className="text-[11px] text-gray-500">
+                                মডেল (হলুদ কুর্তি) + LOTUS SHOP BD + Fashion &amp; Lifestyle For Everyone + এক ছাদের নিচে সবকিছু
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Banner Upload Zone */}
+                      <div className="mt-4">
+                        <input
+                          type="file"
+                          ref={bannerFileInputRef}
+                          onChange={handleBannerFileUpload}
+                          accept="image/png, image/jpeg, image/jpg, image/webp"
+                          className="hidden"
+                          id="admin-banner-upload-input"
+                        />
+
+                        <div
+                          onDragOver={(e) => { e.preventDefault(); setIsDraggingBanner(true); }}
+                          onDragLeave={() => setIsDraggingBanner(false)}
+                          onDrop={handleBannerDrop}
+                          onClick={() => bannerFileInputRef.current?.click()}
+                          className={`p-6 border-2 border-dashed rounded-2xl text-center cursor-pointer transition-all duration-200 ${
+                            isDraggingBanner
+                              ? 'border-amber-500 bg-amber-50/70 scale-[1.01]'
+                              : 'border-amber-300 hover:border-amber-400 bg-white/70 hover:bg-amber-50/30'
+                          }`}
+                        >
+                          <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-md mb-2">
+                            <span className="material-symbols-outlined text-2xl">add_photo_alternate</span>
+                          </div>
+                          <h4 className="font-bold text-gray-900 text-sm">
+                            {settings.heroBannerUrl ? 'হোম ব্যানার পরিবর্তন বা রিপ্লেস (Replace Banner) করুন' : 'হোম স্ক্রিন নতুন ব্যানার ইমেজ আপলোড করুন'}
+                          </h4>
+                          <p className="text-xs text-gray-500 mt-1">
+                            আপনার ব্যানার ছবি বা স্ক্রিনশট ফাইলটি টেনে এনে এখানে ছাড়ুন অথবা ক্লিক করে আপলোড করুন
+                          </p>
+                          <p className="text-[11px] text-gray-400 mt-1 font-mono">
+                            সাপোর্টেড ফরম্যাট: PNG, JPG, WebP | সর্বোচ্চ ৮ MB
+                          </p>
+                          
+                          <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg font-bold text-xs shadow-xs hover:shadow-md transition-all">
+                            <span className="material-symbols-outlined text-sm">folder_open</span>
+                            <span>{settings.heroBannerUrl ? 'ব্যানার ফাইল পরিবর্তন করুন' : 'ব্যানার ইমেজ ব্রাউজ করুন'}</span>
+                          </div>
+                        </div>
+
+                        {/* Banner URL Input & Delete Actions */}
+                        <div className="mt-4 pt-4 border-t border-amber-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                          <div className="flex-1 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-gray-400 text-base shrink-0">link</span>
+                            <input
+                              type="url"
+                              placeholder="অথবা ব্যানার Image URL পেস্ট করুন..."
+                              value={customBannerInputUrl}
+                              onChange={(e) => setCustomBannerInputUrl(e.target.value)}
+                              className="px-3 py-2 border border-gray-300 rounded-lg text-xs w-full focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 bg-white"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleApplyBannerUrl}
+                              className="px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-lg font-bold text-xs shrink-0 cursor-pointer transition-colors shadow-xs"
+                            >
+                              ব্যানার সেট করুন
+                            </button>
+                          </div>
+
+                          {settings.heroBannerUrl && (
+                            <button
+                              type="button"
+                              onClick={handleDeleteBanner}
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg font-bold text-xs transition-colors cursor-pointer shrink-0"
+                              title="কাস্টম ব্যানার মুছে ফেলে মূল ব্যানারে রিসেট করুন"
+                            >
+                              <span className="material-symbols-outlined text-base">delete</span>
+                              <span>ব্যানার ডিলিট (ডিফল্ট রিসেট)</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Sub Tab: Branding */}
                 {settingsSubTab === 'branding' && (
-                  <form onSubmit={handleSaveSettings} className="space-y-4 max-w-2xl text-xs">
+                  <div className="space-y-6 max-w-3xl">
+                    {/* Notice pointing to Appearance Settings */}
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-2.5">
+                        <span className="material-symbols-outlined text-amber-600 text-xl">palette</span>
+                        <div>
+                          <p className="font-bold text-gray-900">লোগো পরিবর্তন করতে চান?</p>
+                          <p className="text-gray-600 text-[11px]">ওয়েবসাইটের লোগো আপলোড, রিপ্লেস ও সাইজ নিয়ন্ত্রণের জন্য Appearance Settings ট্যাবে যান।</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSettingsSubTab('appearance')}
+                        className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs shrink-0 cursor-pointer transition-colors shadow-xs"
+                      >
+                        Appearance Settings খুলুন
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block font-bold text-gray-700 mb-1">ওয়েবসাইটের নাম (English):</label>
@@ -1388,7 +2075,8 @@ export const AdminDashboard: React.FC = () => {
                       <span className="material-symbols-outlined text-base">save</span>
                       <span>ব্র্যান্ডিং সংরক্ষণ করুন</span>
                     </button>
-                  </form>
+                    </form>
+                  </div>
                 )}
 
                 {/* Sub Tab: Shipping */}
@@ -1506,41 +2194,197 @@ export const AdminDashboard: React.FC = () => {
 
                 {/* Sub Tab: Payment */}
                 {settingsSubTab === 'payment' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* bKash */}
-                    <div className="border border-pink-200 rounded-xl p-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-gray-900 text-sm">bKash Merchant PGW</span>
-                        <span className="text-[10px] bg-pink-100 text-pink-800 font-bold px-2 py-0.5 rounded-full">Active</span>
+                  <div className="space-y-6 max-w-4xl text-xs">
+                    {/* Bank Payment Gateway Configuration Card (Requested Feature) */}
+                    <div className="bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 p-6 rounded-2xl border border-emerald-200/90 shadow-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-emerald-100">
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-9 h-9 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-bold shadow-xs">
+                            <span className="material-symbols-outlined text-lg">account_balance</span>
+                          </span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-extrabold text-gray-900 text-sm">
+                                ব্যাংক পেমেন্ট গেটওয়ে (Direct Bank Transfer / Deposit)
+                              </h4>
+                              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-[10px] rounded-full uppercase">
+                                নতুন যুক্ত
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-gray-500 mt-0.5">
+                              গ্রাহকদের জন্য চেকআউট পেজে সরাসরি ব্যাংক ডিপোজিট বা অনলাইন ফান্ড ট্রান্সফার (BEFTN/NPSB) অপশন সক্রিয় করুন।
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Enable/Disable Toggle */}
+                        <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                          <span className="text-xs font-bold text-gray-700">গেটওয়ে স্ট্যাটাস:</span>
+                          <input
+                            type="checkbox"
+                            checked={paymentBankEnabled}
+                            onChange={(e) => {
+                              setPaymentBankEnabled(e.target.checked);
+                              updateSettings({ paymentBankEnabled: e.target.checked });
+                              showToast(
+                                e.target.checked
+                                  ? 'ব্যাংক পেমেন্ট গেটওয়ে সক্রিয় করা হয়েছে!'
+                                  : 'ব্যাংক পেমেন্ট সাময়িক বন্ধ করা হয়েছে',
+                                'info'
+                              );
+                            }}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600 relative"></div>
+                          <span className={`text-xs font-bold ${paymentBankEnabled ? 'text-emerald-700' : 'text-gray-400'}`}>
+                            {paymentBankEnabled ? 'সক্রিয় (Active)' : 'নিষ্ক্রিয় (Off)'}
+                          </span>
+                        </label>
                       </div>
-                      <p className="text-xs text-gray-500">বিকাশ অনলাইন পেমেন্ট এপিআই সক্রিয়</p>
+
+                      {/* Bank Details Form */}
+                      <form onSubmit={handleSaveBankSettings} className="mt-5 space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block font-bold text-gray-700 mb-1">ব্যাংকের নাম (Bank Name):</label>
+                            <input
+                              type="text"
+                              required
+                              value={bankName}
+                              onChange={(e) => setBankName(e.target.value)}
+                              placeholder="e.g. Dutch-Bangla Bank PLC (DBBL)"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-bold text-gray-700 mb-1">একাউন্টের নাম (Account Holder Name):</label>
+                            <input
+                              type="text"
+                              required
+                              value={bankAccountName}
+                              onChange={(e) => setBankAccountName(e.target.value)}
+                              placeholder="e.g. LOTUS SHOP BD"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white font-mono"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block font-bold text-gray-700 mb-1">একাউন্ট নম্বর (Account Number):</label>
+                            <input
+                              type="text"
+                              required
+                              value={bankAccountNumber}
+                              onChange={(e) => setBankAccountNumber(e.target.value)}
+                              placeholder="e.g. 115.120.0098765"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white font-mono font-bold text-emerald-800"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-bold text-gray-700 mb-1">শাখার নাম (Branch Name):</label>
+                            <input
+                              type="text"
+                              required
+                              value={bankBranchName}
+                              onChange={(e) => setBankBranchName(e.target.value)}
+                              placeholder="e.g. Mirpur-10 Branch, Dhaka"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-bold text-gray-700 mb-1">রাউটিং নম্বর (Routing Number):</label>
+                            <input
+                              type="text"
+                              required
+                              value={bankRoutingNumber}
+                              onChange={(e) => setBankRoutingNumber(e.target.value)}
+                              placeholder="e.g. 090273841"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white font-mono"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block font-bold text-gray-700 mb-1">
+                            গ্রাহকদের জন্য ডিপোজিট ও পেমেন্ট নির্দেশিকা (Payment Instructions):
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={bankPaymentInstructions}
+                            onChange={(e) => setBankPaymentInstructions(e.target.value)}
+                            placeholder="গ্রাহক কীভাবে পেমেন্ট করবেন ও রেফারেন্স নম্বর দেবেন..."
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white text-xs leading-relaxed"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-[11px] text-gray-500">
+                            সেভ করার সাথে সাথে চেকআউট পেজের ব্যাংক একাউন্ট বিবরণ আপডেট হয়ে যাবে।
+                          </span>
+                          <button
+                            type="submit"
+                            className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-base">save</span>
+                            <span>ব্যাংক সেটিংস সেভ করুন</span>
+                          </button>
+                        </div>
+                      </form>
                     </div>
 
-                    {/* Nagad */}
-                    <div className="border border-orange-200 rounded-xl p-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-gray-900 text-sm">Nagad Payment Gateway</span>
-                        <span className="text-[10px] bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full">Active</span>
+                    {/* Other Gateways Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* bKash */}
+                      <div className="border border-pink-200 bg-pink-50/20 rounded-xl p-4 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-pink-600"></span>
+                            bKash Merchant PGW
+                          </span>
+                          <span className="text-[10px] bg-pink-100 text-pink-800 font-bold px-2 py-0.5 rounded-full">Active</span>
+                        </div>
+                        <p className="text-xs text-gray-500">বিকাশ অনলাইন পেমেন্ট এপিআই সক্রিয় (+8801834355700)</p>
                       </div>
-                      <p className="text-xs text-gray-500">নগদ সরাসরি মার্চেন্ট পেমেন্ট সক্রিয়</p>
-                    </div>
 
-                    {/* COD */}
-                    <div className="border border-emerald-200 rounded-xl p-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-gray-900 text-sm">ক্যাশ অন ডেলিভারি (COD)</span>
-                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">সক্রিয়</span>
+                      {/* Nagad */}
+                      <div className="border border-orange-200 bg-orange-50/20 rounded-xl p-4 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-orange-600"></span>
+                            Nagad Payment Gateway
+                          </span>
+                          <span className="text-[10px] bg-orange-100 text-orange-800 font-bold px-2 py-0.5 rounded-full">Active</span>
+                        </div>
+                        <p className="text-xs text-gray-500">নগদ সরাসরি মার্চেন্ট পেমেন্ট সক্রিয়</p>
                       </div>
-                      <p className="text-xs text-gray-500">৬৪ জেলায় পণ্য হাতে পেয়ে টাকা পরিশোধের সুবিধা চালু আছে</p>
-                    </div>
 
-                    {/* Cards */}
-                    <div className="border border-blue-200 rounded-xl p-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-gray-900 text-sm">Cards & Internet Banking</span>
-                        <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">Ready</span>
+                      {/* COD */}
+                      <div className="border border-gray-200 bg-gray-50/50 rounded-xl p-4 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                            ক্যাশ অন ডেলিভারি (COD)
+                          </span>
+                          <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">সক্রিয়</span>
+                        </div>
+                        <p className="text-xs text-gray-500">৬৪ জেলায় পণ্য হাতে পেয়ে টাকা পরিশোধের সুবিধা চালু আছে</p>
                       </div>
-                      <p className="text-xs text-gray-500">Visa, MasterCard, Rocket, এবং মোবাইল ব্যাংকিং গেটওয়ে</p>
+
+                      {/* Cards & SSLCommerz */}
+                      <div className="border border-blue-200 bg-blue-50/20 rounded-xl p-4 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                            Cards &amp; Internet Banking (SSLCOMMERZ)
+                          </span>
+                          <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full">Ready</span>
+                        </div>
+                        <p className="text-xs text-gray-500">Visa, MasterCard, Rocket, এবং মোবাইল ব্যাংকিং গেটওয়ে</p>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1620,6 +2464,391 @@ export const AdminDashboard: React.FC = () => {
                   onClick={() => {
                     deleteProduct(productToDelete.id);
                     setProductToDelete(null);
+                  }}
+                  className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/30 flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm">delete</span>
+                  <span>হ্যাঁ, ডিলিট করুন</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Category Management Modal */}
+      {isCategoryManagerOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="relative bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-gray-200 animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-rose-600 via-rose-700 to-amber-700 text-white px-6 py-5 flex items-center justify-between shrink-0 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/25">
+                  <span className="material-symbols-outlined text-2xl">category</span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg tracking-wide flex items-center gap-2">
+                    ক্যাটেগরি ম্যানেজমেন্ট ও নতুন ক্যাটেগরি যোগ
+                    <span className="text-xs bg-white/20 text-white font-bold px-2 py-0.5 rounded-full border border-white/30">
+                      {categories.length}টি ক্যাটেগরি
+                    </span>
+                  </h3>
+                  <p className="text-xs text-rose-100">
+                    স্টোরের পণ্যের জন্য নতুন ক্যাটেগরি তৈরি করুন, নাম পরিবর্তন করুন অথবা ক্যাটেগরি ফিল্টার করুন
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setIsCategoryManagerOpen(false);
+                  cancelEditCategory();
+                }}
+                className="text-white/80 hover:text-white p-2 rounded-xl hover:bg-white/20 transition-colors cursor-pointer"
+                title="বন্ধ করুন"
+              >
+                <span className="material-symbols-outlined text-2xl">close</span>
+              </button>
+            </div>
+
+            {/* Modal Scrollable Content */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1">
+
+              {/* Add / Edit Category Form Card */}
+              <div className="bg-gradient-to-br from-rose-50/60 to-amber-50/40 p-5 rounded-2xl border border-rose-100 shadow-xs">
+                <div className="flex items-center justify-between mb-3.5">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-rose-600 text-xl">
+                      {editingCategory ? 'edit' : 'add_circle'}
+                    </span>
+                    <h4 className="font-bold text-gray-900 text-sm">
+                      {editingCategory ? `ক্যাটেগরি সম্পাদনা: "${editingCategory.name}"` : 'নতুন ক্যাটেগরি যুক্ত করুন (Add New Category)'}
+                    </h4>
+                  </div>
+                  {editingCategory && (
+                    <button
+                      type="button"
+                      onClick={cancelEditCategory}
+                      className="text-xs font-semibold text-gray-500 hover:text-gray-700 bg-white px-2.5 py-1 rounded-lg border border-gray-200 cursor-pointer"
+                    >
+                      বাতিল
+                    </button>
+                  )}
+                </div>
+
+                <form onSubmit={handleSaveCategory} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        ক্যাটেগরির ইংরেজি নাম <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Winter Wear / Cosmetics / Shoes"
+                        value={newCatName}
+                        onChange={(e) => setNewCatName(e.target.value)}
+                        className="w-full px-3.5 py-2 text-xs border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        ক্যাটেগরির বাংলা নাম (ঐচ্ছিক)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. শীতের পোশাক / কসমেটিকস"
+                        value={newCatNameBn}
+                        onChange={(e) => setNewCatNameBn(e.target.value)}
+                        className="w-full px-3.5 py-2 text-xs border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        আইকন (Icon)
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 border border-rose-200">
+                          <span className="material-symbols-outlined text-lg">{newCatIcon || 'category'}</span>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="e.g. category, checkroom"
+                          value={newCatIcon}
+                          onChange={(e) => setNewCatIcon(e.target.value)}
+                          className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 font-mono"
+                        />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        ছবি / ব্যানার URL (Image URL - ঐচ্ছিক)
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://... (ছবি থাকলে হোম বাবল ও কার্ডে দেখাবে)"
+                        value={newCatImage}
+                        onChange={(e) => setNewCatImage(e.target.value)}
+                        className="w-full px-3.5 py-2 text-xs border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quick Icon Selector Pills */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-gray-500 mb-1.5">
+                      দ্রুত আইকন নির্বাচন করুন:
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { icon: 'category', label: 'সাধারণ' },
+                        { icon: 'checkroom', label: 'পোশাক' },
+                        { icon: 'styler', label: 'থ্রি পিস' },
+                        { icon: 'woman', label: 'শাড়ি' },
+                        { icon: 'man', label: 'পুরুষ' },
+                        { icon: 'child_care', label: 'কিডস' },
+                        { icon: 'apparel', label: 'কুর্তি' },
+                        { icon: 'dry_cleaning', label: 'টি-শার্ট' },
+                        { icon: 'steps', label: 'জুতো' },
+                        { icon: 'shopping_bag', label: 'ব্যাগ' },
+                        { icon: 'diamond', label: 'গহনা' },
+                        { icon: 'brush', label: 'বিউটি' },
+                        { icon: 'devices', label: 'ইলেকট্রনিক্স' },
+                        { icon: 'watch', label: 'ঘড়ি' },
+                        { icon: 'ac_unit', label: 'শীতের' }
+                      ].map((item) => (
+                        <button
+                          key={item.icon}
+                          type="button"
+                          onClick={() => setNewCatIcon(item.icon)}
+                          className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1 border transition-all cursor-pointer ${
+                            newCatIcon === item.icon
+                              ? 'bg-rose-600 text-white border-rose-600 font-bold shadow-xs'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-rose-300'
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-sm">{item.icon}</span>
+                          <span>{item.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-rose-100">
+                    {editingCategory && (
+                      <button
+                        type="button"
+                        onClick={cancelEditCategory}
+                        className="px-4 py-2 border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      >
+                        বাতিল
+                      </button>
+                    )}
+                    <button
+                      type="submit"
+                      className="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white rounded-xl text-xs font-bold shadow-sm shadow-rose-600/30 flex items-center gap-1.5 transition-all cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
+                    >
+                      <span className="material-symbols-outlined text-base">
+                        {editingCategory ? 'save' : 'add_circle'}
+                      </span>
+                      <span>{editingCategory ? 'ক্যাটেগরি আপডেট করুন' : '+ নতুন ক্যাটেগরি সংরক্ষণ করুন'}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Existing Categories Table & Search */}
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                      <span>বিদ্যমান ক্যাটেগরি তালিকা</span>
+                      <span className="bg-gray-100 text-gray-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                        মোট {categories.length}টি
+                      </span>
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      যেকোনো ক্যাটেগরি এডিট, ডিলিট বা ক্লিক করে সংশ্লিষ্ট পণ্যগুলো ফিল্টার করতে পারেন
+                    </p>
+                  </div>
+
+                  {/* Search inside categories */}
+                  <div className="relative">
+                    <span className="material-symbols-outlined text-gray-400 text-base absolute left-3 top-1/2 -translate-y-1/2">
+                      search
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="ক্যাটেগরি খুঁজুন..."
+                      value={categorySearch}
+                      onChange={(e) => setCategorySearch(e.target.value)}
+                      className="pl-9 pr-3 py-1.5 border border-gray-300 rounded-xl text-xs w-48 focus:outline-none focus:ring-1 focus:ring-rose-500 bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Categories Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {categories
+                    .filter(c => {
+                      if (!categorySearch) return true;
+                      const q = categorySearch.toLowerCase();
+                      return (
+                        c.name.toLowerCase().includes(q) ||
+                        (c.nameBn && c.nameBn.toLowerCase().includes(q))
+                      );
+                    })
+                    .map((cat) => {
+                      const count = products.filter(p => p.category?.toLowerCase() === cat.name.toLowerCase()).length;
+                      return (
+                        <div
+                          key={cat.id || cat.name}
+                          className="p-3.5 bg-white rounded-2xl border border-gray-200 hover:border-rose-300 transition-all shadow-xs flex flex-col justify-between group"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-11 h-11 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center text-rose-600">
+                              {cat.image ? (
+                                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="material-symbols-outlined text-xl">{cat.icon || 'category'}</span>
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h5 className="font-bold text-gray-900 text-xs truncate">{cat.name}</h5>
+                              {cat.nameBn && cat.nameBn !== cat.name && (
+                                <p className="text-[11px] text-gray-500 truncate">{cat.nameBn}</p>
+                              )}
+                              <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                                <span className="inline-block bg-rose-50 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-100">
+                                  {count} টি পণ্য
+                                </span>
+                                {cat.isPopular && (
+                                  <span className="inline-block bg-amber-50 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-amber-100">
+                                    জনপ্রিয়
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons for Category */}
+                          <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setProductCategoryFilter(cat.name);
+                                setIsCategoryManagerOpen(false);
+                              }}
+                              className="text-[11px] font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                              title="এই ক্যাটেগরির পণ্যগুলো দেখুন"
+                            >
+                              <span className="material-symbols-outlined text-xs">visibility</span>
+                              <span>পণ্য দেখুন</span>
+                            </button>
+
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => startEditCategory(cat)}
+                                className="p-1 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors cursor-pointer"
+                                title="ক্যাটেগরি সম্পাদনা করুন"
+                              >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setCategoryToDelete(cat)}
+                                className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                title="ক্যাটেগরি মুছে ফেলুন"
+                              >
+                                <span className="material-symbols-outlined text-base">delete</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-3.5 flex items-center justify-between shrink-0 text-xs text-gray-500">
+              <span>টিপস: নতুন পণ্য যোগ করার সময়ও আপনি সরাসরি নতুন ক্যাটেগরি তৈরি করতে পারবেন।</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCategoryManagerOpen(false);
+                  cancelEditCategory();
+                }}
+                className="px-4 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-bold cursor-pointer transition-colors"
+              >
+                বন্ধ করুন
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Category Confirmation Modal */}
+      {categoryToDelete && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/65 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-200 animate-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="bg-red-600 text-white px-5 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-2xl text-white">delete_forever</span>
+                <h3 className="font-bold text-base tracking-wide">ক্যাটেগরি ডিলিট নিশ্চিতকরণ</h3>
+              </div>
+              <button
+                onClick={() => setCategoryToDelete(null)}
+                className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
+                title="বন্ধ করুন"
+              >
+                <span className="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3.5 p-3.5 bg-red-50/70 rounded-xl border border-red-100">
+                <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center text-red-600 border border-red-200 shrink-0">
+                  <span className="material-symbols-outlined text-2xl">{categoryToDelete.icon || 'category'}</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 text-sm">{categoryToDelete.name}</h4>
+                  {categoryToDelete.nameBn && (
+                    <p className="text-xs text-gray-500">{categoryToDelete.nameBn}</p>
+                  )}
+                  <div className="text-xs font-bold text-red-700 mt-1">
+                    মোট {products.filter(p => p.category?.toLowerCase() === categoryToDelete.name.toLowerCase()).length} টি পণ্য রয়েছে
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-xs text-gray-600 leading-relaxed bg-gray-50 p-3.5 rounded-xl border border-gray-200">
+                <p className="font-semibold text-gray-800 mb-1">⚠️ আপনি কি নিশ্চিত?</p>
+                <p>
+                  <strong>&quot;{categoryToDelete.name}&quot;</strong> ক্যাটেগরি মুছে ফেলা হবে। বর্তমান পণ্যগুলো ডিলিট হবে না, তবে ক্যাটেগরি তালিকা থেকে এটি বাদ পড়বে।
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setCategoryToDelete(null)}
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+                >
+                  বাতিল (Cancel)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    deleteCategory(categoryToDelete.id);
+                    setCategoryToDelete(null);
                   }}
                   className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow-md shadow-red-600/30 flex items-center gap-1.5 transition-all cursor-pointer"
                 >

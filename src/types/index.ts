@@ -8,6 +8,17 @@ export interface ProductVariant {
   attributes: { [key: string]: string }; // e.g. { Color: "Peach Rose", Size: "XL" }
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  nameBn?: string;
+  slug: string;
+  icon?: string;
+  image?: string;
+  description?: string;
+  isPopular?: boolean;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -66,6 +77,7 @@ export type PaymentMethod =
   | 'rocket'
   | 'upay'
   | 'sslcommerz'
+  | 'bank'
   | 'cod';
 
 export type CourierProvider = 'steadfast' | 'pathao' | 'redx' | 'manual';
@@ -102,6 +114,8 @@ export interface Order {
   paymentMethod: PaymentMethod;
   paymentStatus: 'pending' | 'verified' | 'failed' | 'refunded';
   transactionId?: string;
+  bankName?: string;
+  bankTransactionRef?: string;
   courier: CourierProvider;
   consignmentId?: string;
   trackingNumber?: string;
@@ -139,10 +153,20 @@ export interface StoreSettings {
   paymentNagadEnabled: boolean;
   paymentSslEnabled: boolean;
   paymentCodEnabled: boolean;
+  paymentBankEnabled?: boolean;
+  bankName?: string;
+  bankAccountName?: string;
+  bankAccountNumber?: string;
+  bankBranchName?: string;
+  bankRoutingNumber?: string;
+  bankPaymentInstructions?: string;
   facebookUrl: string;
   instagramUrl: string;
   youtubeUrl: string;
   whatsappNumber: string;
+  logoUrl?: string; // Custom uploaded logo (data URL or external URL)
+  logoHeight?: number;
+  heroBannerUrl?: string; // Custom uploaded Home Hero Banner
 }
 
 export interface AdminUser {

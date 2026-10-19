@@ -8,13 +8,15 @@ import {
   Review,
   OrderStatus,
   CourierProvider,
-  PaymentMethod
+  PaymentMethod,
+  Category
 } from '../types';
 import {
   INITIAL_PRODUCTS,
   INITIAL_ORDERS,
   INITIAL_SETTINGS,
-  INITIAL_REVIEWS
+  INITIAL_REVIEWS,
+  INITIAL_CATEGORIES
 } from '../data/initialData';
 
 interface Toast {
@@ -81,6 +83,12 @@ interface StoreContextType {
   deleteProduct: (productId: string) => void;
   adjustStock: (productId: string, newStock: number) => void;
 
+  // Categories Admin
+  categories: Category[];
+  addCategory: (categoryData: Partial<Category> | string) => Category;
+  updateCategory: (id: string, data: Partial<Category>) => void;
+  deleteCategory: (idOrName: string) => void;
+
   // Settings Admin
   updateSettings: (newSettings: Partial<StoreSettings>) => void;
 
@@ -101,6 +109,52 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const saved = localStorage.getItem('lotus_products');
     return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
   });
+
+  // Categories State & Persistence
+  const [categories, setCategories] = useState<Category[]>(() => {
+    const saved = localStorage.getItem('lotus_categories');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        // fallback
+      }
+    }
+    return INITIAL_CATEGORIES;
+  });
+
+  // Save categories to localStorage
+  useEffect(() => {
+    localStorage.setItem('lotus_categories', JSON.stringify(categories));
+  }, [categories]);
+
+  // Auto-sync any product category with categories list
+  useEffect(() => {
+    if (products.length > 0) {
+      setCategories(prev => {
+        let changed = false;
+        const existingNames = new Set(prev.map(c => c.name.toLowerCase()));
+        const additions: Category[] = [];
+
+        products.forEach(p => {
+          if (p.category && !existingNames.has(p.category.trim().toLowerCase())) {
+            existingNames.add(p.category.trim().toLowerCase());
+            changed = true;
+            additions.push({
+              id: `cat-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+              name: p.category.trim(),
+              nameBn: p.category.trim(),
+              slug: p.category.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+              icon: 'category'
+            });
+          }
+        });
+
+        return changed ? [...prev, ...additions] : prev;
+      });
+    }
+  }, [products]);
 
   // Orders
   const [orders, setOrders] = useState<Order[]>(() => {
@@ -475,6 +529,71 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     showToast('Stock updated successfully');
   };
 
+  // Category Admin Actions
+  const addCategory = (categoryData: Partial<Category> | string): Category => {
+    const rawName = typeof categoryData === 'string' ? categoryData : categoryData.name || '';
+    const name = rawName.trim();
+    if (!name) {
+      showToast('ক্যাটেগরির নাম প্রদান করুন', 'error');
+      throw new Error('Category name cannot be empty');
+    }
+
+    const existing = categories.find(c => c.name.toLowerCase() === name.toLowerCase());
+    if (existing) {
+      showToast(`"${name}" ক্যাটেগরি ইতোমধ্যে রয়েছে`, 'info');
+      return existing;
+    }
+
+    const newCategory: Category = typeof categoryData === 'string'
+      ? {
+          id: `cat-${Date.now()}`,
+          name,
+          nameBn: name,
+          slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          icon: 'category'
+        }
+      : {
+          id: `cat-${Date.now()}`,
+          name,
+          nameBn: categoryData.nameBn?.trim() || name,
+          slug: categoryData.slug?.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          icon: categoryData.icon || 'category',
+          image: categoryData.image || '',
+          description: categoryData.description || '',
+          isPopular: !!categoryData.isPopular
+        };
+
+    setCategories(prev => [...prev, newCategory]);
+    showToast(`"${name}" ক্যাটেগরি সফলভাবে যুক্ত হয়েছে!`, 'success');
+    return newCategory;
+  };
+
+  const updateCategory = (id: string, data: Partial<Category>) => {
+    setCategories(prev =>
+      prev.map(cat => {
+        if (cat.id === id) {
+          const updated = { ...cat, ...data };
+          if (data.name && data.name !== cat.name) {
+            setProducts(prods =>
+              prods.map(p => (p.category === cat.name ? { ...p, category: data.name! } : p))
+            );
+          }
+          return updated;
+        }
+        return cat;
+      })
+    );
+    showToast('ক্যাটেগরি আপডেট করা হয়েছে');
+  };
+
+  const deleteCategory = (idOrName: string) => {
+    setCategories(prev => {
+      const remaining = prev.filter(c => c.id !== idOrName && c.name.toLowerCase() !== idOrName.toLowerCase());
+      return remaining;
+    });
+    showToast('ক্যাটেগরি মুছে ফেলা হয়েছে', 'info');
+  };
+
   // Settings
   const updateSettings = (newSettings: Partial<StoreSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
@@ -573,6 +692,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         saveProduct,
         deleteProduct,
         adjustStock,
+        categories,
+        addCategory,
+        updateCategory,
+        deleteCategory,
         updateSettings,
         loginAdmin,
         logoutAdmin,

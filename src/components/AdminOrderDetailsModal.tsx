@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import { OrderStatus, CourierProvider } from '../types';
+import { Logo } from './Logo';
 
 export const AdminOrderDetailsModal: React.FC = () => {
   const {
@@ -131,10 +132,21 @@ export const AdminOrderDetailsModal: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-gray-500">পেমেন্ট মেথড:</span>
-              <span className="text-xs font-bold uppercase px-2.5 py-1 bg-white border border-gray-200 rounded-md text-gray-800">
-                {activeOrder.paymentMethod} ({isOrderPaid ? 'PAID / পরিশোধিত' : 'COD / বকেয়া'})
+              <span className="text-xs font-bold uppercase px-2.5 py-1 bg-white border border-gray-200 rounded-md text-gray-800 flex items-center gap-1.5">
+                {activeOrder.paymentMethod === 'bank' ? (
+                  <>
+                    <span>🏦 ব্যাংক পেমেন্ট</span>
+                    {activeOrder.transactionId && (
+                      <span className="font-mono text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 text-[10px]">
+                        TRX: {activeOrder.transactionId}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  `${activeOrder.paymentMethod} (${isOrderPaid ? 'PAID / পরিশোধিত' : 'COD / বকেয়া'})`
+                )}
               </span>
             </div>
           </div>
@@ -413,7 +425,7 @@ export const AdminOrderDetailsModal: React.FC = () => {
             {/* Invoice Header */}
             <div className="flex justify-between items-start border-b-2 border-rose-700 pb-4">
               <div className="flex items-center gap-3">
-                <img src="/logo.svg" alt="Lotus" className="h-16 w-auto" />
+                <Logo size="sm" />
                 <div>
                   <h1 className="text-xl font-black text-gray-900 tracking-tight">LOTUS CLOTHING BRAND</h1>
                   <p className="text-xs text-gray-600">হাউস #১২, রোড #০৪, মিরপুর-১০, ঢাকা - ১২১৬, বাংলাদেশ</p>
@@ -497,7 +509,16 @@ export const AdminOrderDetailsModal: React.FC = () => {
                   <span>৳{activeOrder.total.toLocaleString()}</span>
                 </div>
                 <div className="text-[11px] text-gray-600 pt-1">
-                  পেমেন্ট মাধ্যম: <strong className="uppercase">{activeOrder.paymentMethod}</strong> ({isOrderPaid ? 'পরিশোধিত / PAID' : 'ক্যাশ অন ডেলিভারি'})
+                  পেমেন্ট মাধ্যম:{' '}
+                  <strong className="uppercase">
+                    {activeOrder.paymentMethod === 'bank' ? 'ব্যাংক পেমেন্ট (BANK TRANSFER)' : activeOrder.paymentMethod}
+                  </strong>{' '}
+                  ({isOrderPaid ? 'পরিশোধিত / PAID' : activeOrder.paymentMethod === 'bank' ? 'ভেরিফিকেশন সাপেক্ষ' : 'ক্যাশ অন ডেলিভারি'})
+                  {activeOrder.transactionId && (
+                    <span className="block font-mono text-[10px] text-gray-500 mt-0.5">
+                      TRX / Ref ID: {activeOrder.transactionId}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

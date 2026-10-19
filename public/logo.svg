@@ -19,6 +19,24 @@
       <stop offset="50%" stop-color="#F59E0B" />
       <stop offset="100%" stop-color="#FBBF24" />
     </linearGradient>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&amp;family=Playfair+Display:wght@700;800;900&amp;display=swap');
+      .brand-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 900;
+        letter-spacing: 16px;
+      }
+      .brand-sub1 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        letter-spacing: 11px;
+      }
+      .brand-sub2 {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 800;
+        letter-spacing: 8px;
+      }
+    </style>
   </defs>
 
   <!-- ============================================================ -->

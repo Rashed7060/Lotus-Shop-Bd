@@ -85,13 +85,30 @@ export const OrderSuccessPage: React.FC = () => {
           <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
             <span className="text-[11px] text-gray-500 uppercase block font-semibold">পেমেন্ট মেথড</span>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="px-1.5 py-0.2 rounded bg-pink-100 text-pink-800 text-[10px] font-bold">
-                {order.paymentMethod.toUpperCase()}
+              <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                order.paymentMethod === 'bank'
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : order.paymentMethod === 'cod'
+                  ? 'bg-amber-100 text-amber-800'
+                  : 'bg-pink-100 text-pink-800'
+              }`}>
+                {order.paymentMethod === 'bank' ? '🏦 BANK' : order.paymentMethod.toUpperCase()}
               </span>
-              <span className="text-xs font-bold text-emerald-700">পরিশোধিত</span>
+              <span className="text-xs font-bold text-emerald-700">
+                {order.paymentMethod === 'bank'
+                  ? 'রেফারেন্স গৃহীত'
+                  : order.paymentMethod === 'cod'
+                  ? 'ক্যাশ অন ডেলিভারি'
+                  : 'পরিশোধিত'}
+              </span>
             </div>
-            <span className="text-xs font-bold font-data-tabular text-gray-900 mt-0.5 block">
-              ৳{order.total.toLocaleString('bn-BD')} (ভেরিফায়েড)
+            <span className="text-xs font-bold font-data-tabular text-gray-900 mt-0.5 block truncate">
+              ৳{order.total.toLocaleString('bn-BD')}{' '}
+              {order.paymentMethod === 'bank' && order.transactionId
+                ? `(Ref: ${order.transactionId})`
+                : order.paymentMethod === 'cod'
+                ? '(বকেয়া)'
+                : '(ভেরিফায়েড)'}
             </span>
           </div>
 

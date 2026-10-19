@@ -4,7 +4,7 @@ import { BANGLADESH_DIVISIONS, DHAKA_THANAS } from '../data/initialData';
 import { PaymentMethod } from '../types';
 
 export const CheckoutPage: React.FC = () => {
-  const { cart, getCartTotal, placeOrder, setActiveView, showToast } = useStore();
+  const { cart, getCartTotal, placeOrder, setActiveView, showToast, settings } = useStore();
 
   // Form Fields
   const [fullName, setFullName] = useState('তানভীর আহমেদ');
@@ -23,6 +23,10 @@ export const CheckoutPage: React.FC = () => {
   // Payment Method
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bkash');
   const [termsAgreed, setTermsAgreed] = useState(true);
+
+  // Bank Payment states
+  const [bankTransactionRef, setBankTransactionRef] = useState('');
+  const [bankSenderName, setBankSenderName] = useState('');
 
   // Coupon
   const [couponCode, setCouponCode] = useState('LOTUS10');
@@ -73,9 +77,23 @@ export const CheckoutPage: React.FC = () => {
       return;
     }
 
+    if (paymentMethod === 'bank') {
+      if (!bankTransactionRef.trim()) {
+        showToast('অনুগ্রহ করে ব্যাংক ডিপোজিট স্লিপ নম্বর বা ট্রানজেকশন রেফারেন্স দিন', 'error');
+        return;
+      }
+      executeOrderCreation('pending');
+      return;
+    }
+
     if (paymentMethod === 'bkash') {
       setShowBkashModal(true);
       setBkashStep('phone');
+      return;
+    }
+
+    if (paymentMethod === 'cod') {
+      executeOrderCreation('pending');
       return;
     }
 
@@ -86,6 +104,13 @@ export const CheckoutPage: React.FC = () => {
   const executeOrderCreation = (payStatus: 'verified' | 'pending') => {
     setIsProcessing(true);
     setTimeout(() => {
+      const trxId =
+        paymentMethod === 'bkash'
+          ? 'TRX92819034'
+          : paymentMethod === 'bank'
+          ? bankTransactionRef.trim()
+          : `TRX${Math.floor(10000000 + Math.random() * 90000000)}`;
+
       placeOrder({
         customerName: fullName,
         customerPhone: phone,
@@ -105,7 +130,9 @@ export const CheckoutPage: React.FC = () => {
         total: grandTotal,
         paymentMethod,
         paymentStatus: payStatus,
-        transactionId: paymentMethod === 'bkash' ? 'TRX92819034' : `TRX${Math.floor(10000000 + Math.random() * 90000000)}`
+        transactionId: trxId,
+        bankName: paymentMethod === 'bank' ? (settings.bankName || 'Dutch-Bangla Bank PLC') : undefined,
+        bankTransactionRef: paymentMethod === 'bank' ? bankTransactionRef.trim() : undefined
       });
       setIsProcessing(false);
       setShowBkashModal(false);
@@ -613,6 +640,128 @@ export const CheckoutPage: React.FC = () => {
                     </div>
                   </label>
                 </div>
+
+                {/* Bank Payment (ব্যাংক ট্রান্সফার / একাউন্ট ডিপোজিট) */}
+                {settings.paymentBankEnabled !== false && (
+                  <div
+                    onClick={() => setPaymentMethod('bank')}
+                    className={`rounded-xl border p-3.5 cursor-pointer transition-all ${
+                      paymentMethod === 'bank'
+                        ? 'border-2 border-emerald-600 bg-emerald-50/40 shadow-xs'
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    }`}
+                  >
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="payment_method"
+                        checked={paymentMethod === 'bank'}
+                        onChange={() => setPaymentMethod('bank')}
+                        className="text-emerald-600 focus:ring-emerald-500"
+                      />
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-2">
+                          <span className="w-7 h-7 rounded bg-emerald-800 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                            🏦
+                          </span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-gray-900 text-xs">ব্যাংক পেমেন্ট (Direct Bank Transfer / Deposit)</span>
+                              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded">
+                                অফিসিয়াল ব্যাংক একাউন্ট
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-gray-500 block">
+                              {settings.bankName || 'Dutch-Bangla Bank PLC'} - একাউন্টে সরাসরি টাকা জমা বা অনলাইন ফান্ড ট্রান্সফার
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </label>
+
+                    {/* Bank Details & Instructions Dropdown */}
+                    {paymentMethod === 'bank' && (
+                      <div className="mt-3.5 pt-3.5 border-t border-emerald-200 text-xs space-y-3 bg-white p-3.5 rounded-lg border border-emerald-100 shadow-2xs">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-emerald-950 text-xs flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-sm text-emerald-700">account_balance</span>
+                            <span>ব্যাংক একাউন্ট বিবরণ (লোটাস শপ বিডি):</span>
+                          </span>
+                          <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
+                            Verified Business Account
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[11px] bg-gray-50 p-2.5 rounded-lg border border-gray-200">
+                          <div>
+                            <span className="text-gray-500 block">ব্যাংকের নাম:</span>
+                            <span className="font-bold text-gray-900 font-sans">{settings.bankName || 'Dutch-Bangla Bank PLC (DBBL)'}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block">একাউন্টের নাম:</span>
+                            <span className="font-bold text-gray-900 font-mono">{settings.bankAccountName || 'LOTUS SHOP BD'}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block">একাউন্ট নম্বর:</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-emerald-700 font-mono text-xs">{settings.bankAccountNumber || '115.120.0098765'}</span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigator.clipboard.writeText(settings.bankAccountNumber || '115.120.0098765');
+                                  showToast('ব্যাংক একাউন্ট নম্বর কপি করা হয়েছে!');
+                                }}
+                                className="text-gray-400 hover:text-emerald-700 p-0.5 rounded cursor-pointer transition-colors"
+                                title="একাউন্ট নম্বর কপি করুন"
+                              >
+                                <span className="material-symbols-outlined text-sm">content_copy</span>
+                              </button>
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-gray-500 block">শাখা ও রাউটিং নম্বর:</span>
+                            <span className="font-bold text-gray-900 font-mono">
+                              {settings.bankBranchName || 'Mirpur-10 Branch'} (Routing: {settings.bankRoutingNumber || '090273841'})
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-[11px] text-gray-700 bg-amber-50/80 p-2.5 rounded border border-amber-200 leading-relaxed">
+                          📌 {settings.bankPaymentInstructions || 'অনলাইন ইন্টারনেট ব্যাংকিং (NPSB/BEFTN) অথবা সরাসরি ব্যাংক ব্রাঞ্চে ডিপোজিট করে নিচের ঘরে ট্রানজেকশন রেফারেন্স বা স্লিপ নম্বর দিন।'}
+                        </p>
+
+                        <div className="space-y-2 pt-1">
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-800 mb-1">
+                              ডিপোজিট স্লিপ নম্বর / ব্যাংক ট্রানজেকশন রেফারেন্স (TRX ID): <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={bankTransactionRef}
+                              onChange={(e) => setBankTransactionRef(e.target.value)}
+                              placeholder="e.g. DBBL-92819284 অথবা ডিপোজিট স্লিপ নম্বর..."
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-mono focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                              প্রেরকের ব্যাংক বা একাউন্টের নাম (ঐচ্ছিক):
+                            </label>
+                            <input
+                              type="text"
+                              value={bankSenderName}
+                              onChange={(e) => setBankSenderName(e.target.value)}
+                              placeholder="যে ব্যাংক থেকে টাকা পাঠিয়েছেন (e.g. City Bank / Brac Bank)..."
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Cash on Delivery (COD) */}
                 <div

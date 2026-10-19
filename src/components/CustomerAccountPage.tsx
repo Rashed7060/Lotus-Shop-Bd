@@ -333,9 +333,27 @@ export const CustomerAccountPage: React.FC = () => {
                   </div>
 
                   {/* Payment pill */}
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-pink-100 text-pink-800 border border-pink-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-pink-700"></span>
-                    <span>{order.paymentMethod.toUpperCase()} ভেরিফাইড (Paid)</span>
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+                    order.paymentMethod === 'bank'
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                      : order.paymentMethod === 'cod'
+                      ? 'bg-amber-100 text-amber-800 border-amber-200'
+                      : 'bg-pink-100 text-pink-800 border-pink-200'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${
+                      order.paymentMethod === 'bank'
+                        ? 'bg-emerald-600'
+                        : order.paymentMethod === 'cod'
+                        ? 'bg-amber-600'
+                        : 'bg-pink-700'
+                    }`}></span>
+                    <span>
+                      {order.paymentMethod === 'bank'
+                        ? '🏦 BANK PAYMENT (ভেরিফিকেশন সাপেক্ষ)'
+                        : order.paymentMethod === 'cod'
+                        ? '🚚 ক্যাশ অন ডেলিভারি (COD)'
+                        : `${order.paymentMethod.toUpperCase()} ভেরিফাইড (Paid)`}
+                    </span>
                   </span>
                 </div>
 

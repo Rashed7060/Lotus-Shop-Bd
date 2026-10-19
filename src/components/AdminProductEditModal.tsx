@@ -13,12 +13,12 @@ export const AdminProductEditModal: React.FC<AdminProductEditModalProps> = ({
   isOpen,
   onClose
 }) => {
-  const { saveProduct, deleteProduct, showToast } = useStore();
+  const { saveProduct, deleteProduct, showToast, categories, addCategory } = useStore();
 
   const [name, setName] = useState('');
   const [nameBn, setNameBn] = useState('');
   const [sku, setSku] = useState('');
-  const [category, setCategory] = useState('Women Fashion');
+  const [category, setCategory] = useState('Three Piece');
   const [brand, setBrand] = useState('Lotus Elegance');
   const [price, setPrice] = useState<number>(1850);
   const [regularPrice, setRegularPrice] = useState<number>(2450);
@@ -29,6 +29,31 @@ export const AdminProductEditModal: React.FC<AdminProductEditModalProps> = ({
   const [badge, setBadge] = useState<'New' | 'Hot' | 'Sale' | 'Trending'>('Trending');
   const [selectedSizes, setSelectedSizes] = useState<string[]>(['M', 'L', 'XL']);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // New Category inline creation state
+  const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryNameBn, setNewCategoryNameBn] = useState('');
+
+  const handleCreateCategory = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!newCategoryName.trim()) {
+      showToast('ক্যাটেগরির নাম লিখুন', 'error');
+      return;
+    }
+    try {
+      const created = addCategory({
+        name: newCategoryName.trim(),
+        nameBn: newCategoryNameBn.trim() || newCategoryName.trim()
+      });
+      setCategory(created.name);
+      setNewCategoryName('');
+      setNewCategoryNameBn('');
+      setIsAddingNewCategory(false);
+    } catch (err) {
+      // handled in store
+    }
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -293,20 +318,90 @@ export const AdminProductEditModal: React.FC<AdminProductEditModalProps> = ({
               />
             </div>
             <div>
-              <label className="block font-bold text-gray-700 mb-1">
-                ক্যাটেগরি (Category)
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block font-bold text-gray-700">
+                  ক্যাটেগরি (Category) <span className="text-rose-500">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingNewCategory(!isAddingNewCategory)}
+                  className="text-xs font-bold text-rose-600 hover:text-rose-700 hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm">
+                    {isAddingNewCategory ? 'remove_circle' : 'add_circle'}
+                  </span>
+                  <span>{isAddingNewCategory ? 'বাতিল' : '+ নতুন ক্যাটেগরি'}</span>
+                </button>
+              </div>
+
+              {/* Inline Quick Add Category Form */}
+              {isAddingNewCategory && (
+                <div className="mb-2 p-2.5 bg-rose-50/90 border border-rose-200 rounded-xl space-y-2 animate-in fade-in duration-150 shadow-xs">
+                  <div className="text-[11px] font-bold text-rose-900 flex items-center justify-between">
+                    <span>নতুন ক্যাটেগরি যোগ করুন:</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="ক্যাটেগরি নাম (e.g. Winter Wear)"
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                      className="px-2.5 py-1.5 text-xs border border-rose-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      autoFocus
+                    />
+                    <input
+                      type="text"
+                      placeholder="বাংলা নাম (e.g. শীতের পোশাক)"
+                      value={newCategoryNameBn}
+                      onChange={(e) => setNewCategoryNameBn(e.target.value)}
+                      className="px-2.5 py-1.5 text-xs border border-rose-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-rose-500"
+                    />
+                  </div>
+                  <div className="flex items-center justify-end gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsAddingNewCategory(false)}
+                      className="px-2.5 py-1 text-xs text-gray-600 hover:bg-gray-200 rounded-md cursor-pointer"
+                    >
+                      বাতিল
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCreateCategory}
+                      className="px-3 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-xs">check</span>
+                      <span>যোগ ও নির্বাচন করুন</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value === '__add_new__') {
+                    setIsAddingNewCategory(true);
+                  } else {
+                    setCategory(e.target.value);
+                  }
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-rose-500 bg-white"
+                required
               >
-                <option value="Women Fashion">Women Fashion (মহিলাদের পোশাক)</option>
-                <option value="Men Fashion">Men Fashion (পুরুষদের পোশাক)</option>
-                <option value="Saree & Three Piece">Saree & Three Piece (শাড়ি ও থ্রি পিস)</option>
-                <option value="Beauty & Makeup">Beauty & Makeup (সৌন্দর্য ও প্রসাধন)</option>
-                <option value="Jewelry & Accessories">Jewelry & Accessories (গহনা)</option>
-                <option value="Footwear">Footwear (জুতো)</option>
+                {/* Dynamically list all categories */}
+                {categories.map((c) => (
+                  <option key={c.id || c.name} value={c.name}>
+                    {c.name} {c.nameBn && c.nameBn !== c.name ? `(${c.nameBn})` : ''}
+                  </option>
+                ))}
+                {/* If current category is not in list, show it */}
+                {category && !categories.some(c => c.name.toLowerCase() === category.toLowerCase()) && (
+                  <option value={category}>{category}</option>
+                )}
+                <option value="__add_new__" className="font-bold text-rose-600">
+                  + নতুন ক্যাটেগরি যোগ করুন...
+                </option>
               </select>
             </div>
             <div>
